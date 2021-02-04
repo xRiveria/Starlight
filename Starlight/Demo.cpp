@@ -1,16 +1,13 @@
-#include "Source/Logger.h"
+#include "Log.h"
 #include <memory>
 
 int main(int argc, int argv[])
 {
-	std::shared_ptr<Starlight::Logger> m_Logger = std::make_shared<Starlight::Logger>("Engine Logger");
+	Application::Log::InitializeLogger();
 
-	m_Logger->EnableFileLogging(true);
-	m_Logger->EnableBacktracing(5);
+	ENGINE_LOG_INFO("Initialized %s", "Starlight Logger!");
+	ENGINE_LOG_WARN("%d GPU Cycles Recorded!", 5);
+	ENGINE_LOG_ERROR("Your backend named %s has crashed!", "Aurora");
 
-	m_Logger->WriteInfoLog("Initialized %s", "Starlight Logger!");
-	m_Logger->WriteWarningLog("%d GPU Cycles Recorded!", 5);
-	m_Logger->WriteErrorLog("Your backend named %s has crashed!", "Aurora");
-
-	m_Logger->DumpBacktracingBuffer();
+	Application::Log::RetrieveApplicationLogger()->DumpBacktracingBuffer();
 }

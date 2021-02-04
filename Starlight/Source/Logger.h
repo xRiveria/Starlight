@@ -1,5 +1,6 @@
 #pragma once
-#include "LoggerCommons.h"
+#include "LogCommons.h"
+#include "ConsoleState.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -31,10 +32,10 @@ namespace Starlight
 
 
 	private:
-		std::string PatternFormatter(const LogPackage& logPackage);
+		std::string PatternFormatter(LogPackage& logPackage);
 		void WriteLogMessage(const std::string& logMessage , const LogLevel& logLevel);
 
-		void LogString(const std::string& logMessage); //Everything resolves to this.
+		void LogString(const LogPackage& logPackage); //Everything resolves to this.
 		void LogToFile(const std::string& logMessage);
 
 	private:
@@ -44,7 +45,8 @@ namespace Starlight
 		//States
 		bool m_LogToFile = false;
 		bool m_LogBacktracing = false;
-		std::vector<std::string> m_LogBuffer;
+		std::vector<LogPackage> m_LogBuffer;
+		ConsoleState m_ConsoleState;
 
 		//File Operations
 		std::ofstream m_FileOut;

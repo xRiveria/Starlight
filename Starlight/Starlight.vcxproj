@@ -147,11 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\LoggerCommons.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="Source\ConsoleState.h" />
+    <ClInclude Include="Source\LogCommons.h" />
     <ClInclude Include="Source\Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Source\ConsoleState.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

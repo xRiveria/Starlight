@@ -46,15 +46,26 @@ namespace Starlight
 
 	void Logger::WriteLogMessage(const std::string& logMessage, const LogLevel& logLevel)
 	{
-		LogPackage logPackage(logMessage, logLevel);
-		std::string formattedMessage = PatternFormatter(logPackage);
+		LogPackage logPackage(logMessage, m_LoggerName, logLevel);
+		PatternFormatter(logPackage);
 
-		LogString(formattedMessage);
+		if (m_LogBacktracing)
+		{
+			m_LogBuffer.emplace_back(logPackage);
+		}
+
+		if (m_LogToFile)
+		{
+			LogToFile(logPackage.m_LogMessage);
+		}
+
+		LogString(logPackage);
 	}
 
-	std::string Logger::PatternFormatter(const LogPackage& logPackage)
+	std::string Logger::PatternFormatter(LogPackage& logPackage)
 	{
 		std::string logPrefix;
+		std::string loggerNamePostfix = ": ";
 
 		switch (logPackage.m_LogLevel)
 		{
@@ -74,24 +85,19 @@ namespace Starlight
 				logPrefix = "No levels found.";
 		}
 
-		logPrefix = logPrefix + logPackage.m_LogMessage + std::string("\n");
+		logPrefix = logPrefix + logPackage.m_LoggerName + loggerNamePostfix + logPackage.m_LogMessage + std::string("\n");
+		logPackage.m_LogMessage = logPrefix;
 
 		return logPrefix;
 	}
 
-	void Logger::LogString(const std::string& logMessage) //Everything flows into here.
+	void Logger::LogString(const LogPackage& logPackage) //Everything flows into here.
 	{
-		std::cout << logMessage;
+		m_ConsoleState.SetConsoleTextColor(logPackage.m_LogLevel);
 
-		if (m_LogBacktracing)
-		{
-			m_LogBuffer.emplace_back(logMessage);
-		}
+		std::cout << logPackage.m_LogMessage;
 
-		if (m_LogToFile)
-		{
-			LogToFile(logMessage);
-		}
+		m_ConsoleState.RestoreConsoleAttributes();
 	}
 
 	void Logger::LogToFile(const std::string& logMessage)
@@ -129,9 +135,9 @@ namespace Starlight
 
 	void Logger::DumpBacktracingBuffer()
 	{
-		for (const std::string& logMessage : m_LogBuffer)
+		for (const LogPackage& logPackage : m_LogBuffer)
 		{
-			std::cout << logMessage;
+			LogString(logPackage);
 		}
 	}
 }
