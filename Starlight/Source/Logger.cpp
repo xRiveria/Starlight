@@ -1,11 +1,25 @@
 #include "Logger.h"
 #include <cstdarg>
-#include <iostream>
+#include "FileSystem.h"
 
 namespace Starlight
 {
 	Logger::Logger(const std::string& loggerName) : m_LoggerName(loggerName)
 	{
+		//Each time the program runs, we should create a new file with time and date as its name.
+		m_LogFileName = FileSystem::CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
+	}
+
+	void Logger::WriteInitializationLog(std::string logMessage, ...)
+	{
+		char buffer[2048] = { 0 };
+
+		va_list args;
+		va_start(args, logMessage);
+		auto w = vsnprintf(buffer, sizeof(buffer), logMessage.c_str(), args);
+		va_end(args);
+
+		WriteLogMessage(buffer, LogLevel::Initialization);
 	}
 
 	void Logger::WriteInfoLog(std::string logMessage, ...)
@@ -44,19 +58,61 @@ namespace Starlight
 		WriteLogMessage(buffer, LogLevel::Error);
 	}
 
+	void Logger::WriteCriticalLog(std::string logMessage, ...)
+	{
+		char buffer[2048] = { 0 };
+
+		va_list args;
+		va_start(args, logMessage);
+		auto w = vsnprintf(buffer, sizeof(buffer), logMessage.c_str(), args);
+		va_end(args);
+
+		WriteLogMessage(buffer, LogLevel::Critical);
+		std::terminate();
+	}
+
 	void Logger::WriteLogMessage(const std::string& logMessage, const LogLevel& logLevel)
 	{
-		LogPackage logPackage(logMessage, m_LoggerName, logLevel);
+		LogPackage logPackage(logMessage, m_LoggerName, logLevel, RetrieveCurrentTime(LogTimeMode::Console));
 		PatternFormatter(logPackage);
 
 		if (m_LogBacktracing)
 		{
-			m_LogBuffer.emplace_back(logPackage);
+			m_BacktraceBuffer.PushBackLogPackage(logPackage);
 		}
 
 		if (m_LogToFile)
 		{
-			LogToFile(logPackage.m_LogMessage);
+			std::string logPrefix; 
+
+			switch (logPackage.m_LogLevel)	//Adds the prefix manually as we can't see colors in the file.
+			{
+				case LogLevel::Initialization:
+					logPrefix = "[INITIALIZE] ";
+					break;
+
+				case LogLevel::Info:
+					logPrefix = "[INFO] ";
+					break;
+
+				case LogLevel::Warning:
+					logPrefix = "[WARNING] ";
+					break;
+
+				case LogLevel::Error:
+					logPrefix = "[ERROR] ";
+					break;
+
+				case LogLevel::Critical:
+					logPrefix = "[CRITICAL] ";
+					break;
+
+				default:
+					logPrefix = "No levels found.";
+			}
+
+			logPrefix.append(logPackage.m_LogMessage);
+			LogToFile(logPrefix);
 		}
 
 		LogString(logPackage);
@@ -65,27 +121,14 @@ namespace Starlight
 	std::string Logger::PatternFormatter(LogPackage& logPackage)
 	{
 		std::string logPrefix;
-		std::string loggerNamePostfix = ": ";
+		logPrefix.append("[");
+		logPrefix.append(logPackage.m_LogTime);     
+		logPrefix.append("] ");
+		logPrefix.append(logPackage.m_LoggerName);
+		logPrefix.append(": ");
+		logPrefix.append(logPackage.m_LogMessage);
+		logPrefix.append("\n");
 
-		switch (logPackage.m_LogLevel)
-		{
-			case LogLevel::Info:
-				logPrefix = "[INFO] ";
-				break;
-
-			case LogLevel::Warning:
-				logPrefix = "[WARNING] ";
-				break;
-
-			case LogLevel::Error:
-				logPrefix = "[ERROR] ";
-				break;
-
-			default:
-				logPrefix = "No levels found.";
-		}
-
-		logPrefix = logPrefix + logPackage.m_LoggerName + loggerNamePostfix + logPackage.m_LogMessage + std::string("\n");
 		logPackage.m_LogMessage = logPrefix;
 
 		return logPrefix;
@@ -125,6 +168,7 @@ namespace Starlight
 
 	void Logger::EnableBacktracing(size_t messageCount)
 	{
+		m_BacktraceBuffer.EnableBacktraceBuffer(messageCount);
 		m_LogBacktracing = true;
 	}
 
@@ -135,9 +179,17 @@ namespace Starlight
 
 	void Logger::DumpBacktracingBuffer()
 	{
-		for (const LogPackage& logPackage : m_LogBuffer)
+		if (!m_LogBacktracing)
+		{
+			WriteErrorLog("Cannot dump log messages. Backtracing is not enabled.");
+			return;
+		}
+
+		for (const LogPackage& logPackage : m_BacktraceBuffer.RetrieveLogPackages())
 		{
 			LogString(logPackage);
 		}
+
+		m_BacktraceBuffer.ClearBuffer();
 	}
 }

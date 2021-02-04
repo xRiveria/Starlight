@@ -1,6 +1,7 @@
 #pragma once
 #include "LogCommons.h"
 #include "ConsoleState.h"
+#include "BacktraceBuffer.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -18,9 +19,11 @@ namespace Starlight
 		~Logger() = default;
 		 
 		//Logging Levels
+		void WriteInitializationLog(std::string logMessage, ...);
 		void WriteInfoLog(std::string logMessage, ...);
 		void WriteWarningLog(std::string logMessage, ...);
 		void WriteErrorLog(std::string logMessage, ...);
+		void WriteCriticalLog(std::string logMessage, ...);
 
 		//Backtracing Support. Efficiently stores all debug messages in a buffer/queue until needed for debugging.
 		void EnableBacktracing(size_t messageCount);
@@ -40,12 +43,15 @@ namespace Starlight
 
 	private:
 		std::string m_LogFileName = "Logs/Log.txt";
+		size_t m_LogFileIndex = 0;
+
 		std::string m_LoggerName;
+		BacktraceBuffer m_BacktraceBuffer;
 		
 		//States
 		bool m_LogToFile = false;
 		bool m_LogBacktracing = false;
-		std::vector<LogPackage> m_LogBuffer;
+		
 		ConsoleState m_ConsoleState;
 
 		//File Operations

@@ -24,9 +24,10 @@ namespace Starlight
 
     void ConsoleState::InitializeLogLevelColors()
 	{
-		m_LogLevelColorMap[LogLevel::Initialization] = GreenConsoleTextColor;
+		m_LogLevelColorMap[LogLevel::Initialization] = BlueConsoleTextColor;
 		m_LogLevelColorMap[LogLevel::Info] = GreenConsoleTextColor;
 		m_LogLevelColorMap[LogLevel::Warning] = YellowConsoleTextColor;
 		m_LogLevelColorMap[LogLevel::Error] = RedConsoleTextColor;
+		m_LogLevelColorMap[LogLevel::Critical] = CriticalConsoleTextColor;
 	}
 }
