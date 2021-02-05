@@ -6,11 +6,11 @@ namespace Starlight
 	class FileSystem
 	{
 	public:
-		static std::string CreateNewFile(const std::string& filePath);
-		static void ChangeLogDirectory(const std::string& fileDirectory);
+		std::string CreateNewFile(const std::string& filePath);
+		void ChangeLogDirectory(const std::string& fileDirectory);
 
 	private:
-		static std::string m_LogDirectory;
-		static std::string m_LogFilePostfix;
-	};
+		std::string m_LogDirectory = "Logs/";
+		std::string m_LogFilePostfix = ".txt";
+	}; 
 }

@@ -9,6 +9,12 @@ namespace Starlight
 
 	void BacktraceBuffer::PushBackLogPackage(const LogPackage& logPackage)
 	{
+		//Prevent overflowing.
+		if (m_LogPackages.size() + 1 > m_MaximumBufferSize)
+		{
+			m_LogPackages.erase(m_LogPackages.begin());
+		}
+
 		m_LogPackages.push_back(logPackage);
 	}
 

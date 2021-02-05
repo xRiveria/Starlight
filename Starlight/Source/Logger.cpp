@@ -1,13 +1,11 @@
 #include "Logger.h"
 #include <cstdarg>
-#include "FileSystem.h"
 
 namespace Starlight
 {
 	Logger::Logger(const std::string& loggerName) : m_LoggerName(loggerName)
 	{
-		//Each time the program runs, we should create a new file with time and date as its name.
-		m_LogFileName = FileSystem::CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
+
 	}
 
 	void Logger::WriteInitializationLog(std::string logMessage, ...)
@@ -158,6 +156,8 @@ namespace Starlight
 		}
 	}
 
+	//====================================================================================================
+
 	void Logger::EnableFileLogging(const bool& value)
 	{
 		if (value != m_LogToFile)
@@ -166,10 +166,44 @@ namespace Starlight
 		}
 	}
 
-	void Logger::EnableBacktracing(size_t messageCount)
+	void Logger::EnableStartupLogging(const bool& value)
 	{
-		m_BacktraceBuffer.EnableBacktraceBuffer(messageCount);
-		m_LogBacktracing = true;
+		if (value != m_StartupFileLogging)
+		{
+			m_StartupFileLogging = value;
+		}
+
+		if (m_LogToFile && value)
+		{
+			//Each time the program runs, we should create a new file with time and date as its name if enabled.
+			m_LogFileName = m_FileSystemHelper.CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
+		}
+	}
+
+	void Logger::EnableDailyLoggingTimer(const bool& value, const int& hour, const int& minutes)
+	{
+		if (value != m_DailyFileLogging)
+		{
+			m_DailyFileLogging = value;
+		}
+
+		if (m_LogToFile && value)
+		{
+
+		}
+	}
+
+	void Logger::EnableBacktracing(const bool& value, size_t messageCount)
+	{
+		if (value != m_LogBacktracing)
+		{
+			m_LogBacktracing = value;
+		}
+
+		if (value)
+		{
+			m_BacktraceBuffer.EnableBacktraceBuffer(messageCount);
+		}
 	}
 
 	void Logger::DisableBacktracing()
