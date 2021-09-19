@@ -18,7 +18,7 @@
     <ClInclude Include="Source\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\LogCommons.h">
+    <ClInclude Include="Source\LogUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ConsoleState.h">

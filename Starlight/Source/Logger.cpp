@@ -158,7 +158,7 @@ namespace Starlight
 
 	//====================================================================================================
 
-	void Logger::EnableFileLogging(const bool& value)
+	void Logger::EnableFileLogging(bool value)
 	{
 		if (value != m_LogToFile)
 		{
@@ -166,7 +166,7 @@ namespace Starlight
 		}
 	}
 
-	void Logger::EnableStartupLogging(const bool& value)
+	void Logger::EnableStartupLogging(bool value)
 	{
 		if (value != m_StartupFileLogging)
 		{
@@ -176,11 +176,11 @@ namespace Starlight
 		if (m_LogToFile && value)
 		{
 			//Each time the program runs, we should create a new file with time and date as its name if enabled.
-			m_LogFileName = m_FileSystemHelper.CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
+			m_LogFileName = FileSystem::CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
 		}
 	}
 
-	void Logger::EnableDailyLoggingTimer(const bool& value, const int& hour, const int& minutes)
+	void Logger::EnableDailyLoggingTimer(bool value, int hour, int minutes)
 	{
 		if (value != m_DailyFileLogging)
 		{
@@ -193,7 +193,7 @@ namespace Starlight
 		}
 	}
 
-	void Logger::EnableBacktracing(const bool& value, size_t messageCount)
+	void Logger::EnableBacktracing(bool value, size_t messageCount)
 	{
 		if (value != m_LogBacktracing)
 		{

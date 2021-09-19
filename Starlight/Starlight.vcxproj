@@ -155,7 +155,7 @@
     <ClInclude Include="Source\BacktraceBuffer.h" />
     <ClInclude Include="Source\ConsoleState.h" />
     <ClInclude Include="Source\FileSystem.h" />
-    <ClInclude Include="Source\LogCommons.h" />
+    <ClInclude Include="Source\LogUtilities.h" />
     <ClInclude Include="Source\Logger.h" />
   </ItemGroup>
   <ItemGroup>

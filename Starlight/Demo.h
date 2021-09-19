@@ -8,7 +8,7 @@ namespace Application
 	{
 	public:
 		static void InitializeLogger();
-		static std::shared_ptr<Starlight::Logger>& RetrieveApplicationLogger() { return s_ApplicationLogger; }
+		static std::shared_ptr<Starlight::Logger>& GetInstance() { return s_ApplicationLogger; }
 
 	private:
 		static std::shared_ptr<Starlight::Logger> s_ApplicationLogger;
@@ -16,8 +16,8 @@ namespace Application
 };
 
 //Core Logging Macros
-#define ENGINE_LOG_INITIALIZATION(...)	::Application::Log::RetrieveApplicationLogger()->WriteInitializationLog(__VA_ARGS__);
-#define ENGINE_LOG_INFO(...)			::Application::Log::RetrieveApplicationLogger()->WriteInfoLog(__VA_ARGS__);
-#define ENGINE_LOG_WARN(...)			::Application::Log::RetrieveApplicationLogger()->WriteWarningLog(__VA_ARGS__);
-#define ENGINE_LOG_ERROR(...)			::Application::Log::RetrieveApplicationLogger()->WriteErrorLog(__VA_ARGS__);
-#define ENGINE_LOG_CRITICAL(...)		::Application::Log::RetrieveApplicationLogger()->WriteCriticalLog(__VA_ARGS__);
+#define ENGINE_LOG_INITIALIZATION(...)	::Application::Log::GetInstance()->WriteInitializationLog(__VA_ARGS__);
+#define ENGINE_LOG_INFO(...)			::Application::Log::GetInstance()->WriteInfoLog(__VA_ARGS__);
+#define ENGINE_LOG_WARN(...)			::Application::Log::GetInstance()->WriteWarningLog(__VA_ARGS__);
+#define ENGINE_LOG_ERROR(...)			::Application::Log::GetInstance()->WriteErrorLog(__VA_ARGS__);
+#define ENGINE_LOG_CRITICAL(...)		::Application::Log::GetInstance()->WriteCriticalLog(__VA_ARGS__);

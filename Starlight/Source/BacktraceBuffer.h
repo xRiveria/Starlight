@@ -1,5 +1,5 @@
 #pragma once
-#include "LogCommons.h"
+#include "LogUtilities.h"
 #include <vector>
 
 namespace Starlight

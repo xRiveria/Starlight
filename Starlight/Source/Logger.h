@@ -1,5 +1,5 @@
 #pragma once
-#include "LogCommons.h"
+#include "LogUtilities.h"
 #include "ConsoleState.h"
 #include "BacktraceBuffer.h"
 #include "FileSystem.h"
@@ -19,24 +19,22 @@ namespace Starlight
 		Logger(const std::string& loggerName);
 		~Logger() = default;
 		 
-		//Logging Levels
+		// Logging Levels
 		void WriteInitializationLog(std::string logMessage, ...);
 		void WriteInfoLog(std::string logMessage, ...);
 		void WriteWarningLog(std::string logMessage, ...);
 		void WriteErrorLog(std::string logMessage, ...);
 		void WriteCriticalLog(std::string logMessage, ...);
 
-		//Backtracing Support. Efficiently stores all debug messages in a buffer/queue until needed for debugging.
-		void EnableBacktracing(const bool& value, size_t messageCount);
+		// Backtracing Support. Efficiently stores all debug messages in a buffer/queue until needed for debugging.
+		void EnableBacktracing(bool value, size_t messageCount);
 		void DisableBacktracing();
 		void DumpBacktracingBuffer();
 
-		//File Logging Support
-		void EnableFileLogging(const bool& value);
-		void EnableStartupLogging(const bool& value);
-		void EnableDailyLoggingTimer(const bool& value, const int& hour, const int& minutes);
-
-		FileSystem RetrieveFileSystemHelper() { return m_FileSystemHelper; }
+		// File Logging Support
+		void EnableFileLogging(bool value);
+		void EnableStartupLogging(bool value);
+		void EnableDailyLoggingTimer(bool value, int hour, int minutes);
 
 	private:
 		std::string PatternFormatter(LogPackage& logPackage);
@@ -50,7 +48,6 @@ namespace Starlight
 		size_t m_LogFileIndex = 0;
 
 		std::string m_LoggerName;
-		FileSystem m_FileSystemHelper;
 		
 		//States
 		bool m_LogToFile = false;

@@ -7,7 +7,7 @@ namespace Application
 
 	void Log::InitializeLogger()
 	{
-		s_ApplicationLogger = std::make_shared<Starlight::Logger>("Application Name"); //Creates a global logger object.
+		s_ApplicationLogger = std::make_shared<Starlight::Logger>("Aurora Engine"); //Creates a global logger object.
 	}
 }
 
@@ -19,19 +19,19 @@ int main(int argc, int argv[])
 	//File Logging Support
 	{
 		//Enables support to store your logs into a text file. This is a master switch that does nothing on its own. We must also enable its associative features. 
-		Application::Log::RetrieveApplicationLogger()->EnableFileLogging(true); 
+		Application::Log::GetInstance()->EnableFileLogging(true); 
 		//Creates a new log file everytime the application launches.
-		Application::Log::RetrieveApplicationLogger()->EnableStartupLogging(true);
+		Application::Log::GetInstance()->EnableStartupLogging(true);
 		//Starts a daily timer that creates a log file at 5:30am everyday.
-		Application::Log::RetrieveApplicationLogger()->EnableDailyLoggingTimer(true, 5, 30);
-		//Changes the log directory for your text logs. Make sure your directory is correct.
-		///Application::Log::RetrieveApplicationLogger()->RetrieveFileSystemHelper().ChangeLogDirectory("LogsFolder/");
+		Application::Log::GetInstance()->EnableDailyLoggingTimer(true, 5, 30);
+		//Changes the log directory for your text logs.
+		// Starlight::FileSystem::ChangeLogDirectory("LogsFolder/");
 	}
 
 	//Backtracing Support
 	{
 		//Enables support to store your logs into a buffer to be retrieved at will. Second argument states the amount of messages to be stored up to at any given point.
-		Application::Log::RetrieveApplicationLogger()->EnableBacktracing(true, 5);
+		Application::Log::GetInstance()->EnableBacktracing(true, 5);
 	}
 
 	//Different ways to log your system.
@@ -44,5 +44,6 @@ int main(int argc, int argv[])
 	}
 
 	//Outputs the messages you've stored in a backbuffer if enabled.
-	Application::Log::RetrieveApplicationLogger()->DumpBacktracingBuffer();
+	std::cout << "Dumping backtrace buffer..." << "\n";
+	Application::Log::GetInstance()->DumpBacktracingBuffer();
 }
