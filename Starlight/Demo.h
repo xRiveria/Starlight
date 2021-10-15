@@ -1,5 +1,5 @@
 #pragma once
-#include "Source/Logger.h"
+#include "Logging/Logger.h"
 #include <memory>
 
 namespace Application

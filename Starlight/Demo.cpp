@@ -46,4 +46,6 @@ int main(int argc, int argv[])
 	//Outputs the messages you've stored in a backbuffer if enabled.
 	std::cout << "Dumping backtrace buffer..." << "\n";
 	Application::Log::GetInstance()->DumpBacktracingBuffer();
+
+	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
 }
