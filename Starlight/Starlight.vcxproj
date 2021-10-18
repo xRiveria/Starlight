@@ -169,14 +169,16 @@
     <ClInclude Include="Logging\FileSystem.h" />
     <ClInclude Include="Logging\LogUtilities.h" />
     <ClInclude Include="Logging\Logger.h" />
-    <ClInclude Include="RTTI\Any.h" />
-    <ClInclude Include="RTTI\Base.h" />
-    <ClInclude Include="RTTI\Constructor.h" />
-    <ClInclude Include="RTTI\Conversion.h" />
-    <ClInclude Include="RTTI\Function.h" />
-    <ClInclude Include="RTTI\Reflect.h" />
-    <ClInclude Include="RTTI\TypeDescriptor.h" />
-    <ClInclude Include="RTTI\TypeFactory.h" />
+    <ClInclude Include="RTTI\Any.hpp" />
+    <ClInclude Include="RTTI\Base.hpp" />
+    <ClInclude Include="RTTI\Constructor.hpp" />
+    <ClInclude Include="RTTI\Conversion.hpp" />
+    <ClInclude Include="RTTI\DataMember.hpp" />
+    <ClInclude Include="RTTI\Function.hpp" />
+    <ClInclude Include="RTTI\json.hpp" />
+    <ClInclude Include="RTTI\Reflect.hpp" />
+    <ClInclude Include="RTTI\TypeDescriptor.hpp" />
+    <ClInclude Include="RTTI\TypeFactory.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
@@ -184,6 +186,10 @@
     <ClCompile Include="Logging\ConsoleState.cpp" />
     <ClCompile Include="Logging\FileSystem.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
+    <ClCompile Include="RTTI_Demo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RTTI\TypeDescriptor.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,7 @@
 #include "Demo.h"
 #include <memory>
+#include <string>
+#include "RTTI/Reflect.hpp"
 
 namespace Application
 {
@@ -11,8 +13,17 @@ namespace Application
 	}
 }
 
+/*
 int main(int argc, int argv[])
 {
+	// Register type with the reflection system (we reflect them), and attach to them all the metaobject data thar we need.
+	// Reflect::Reflect<int>("int").AddMemberFunction(&Print<int>, "Print");
+	Reflect::Reflect<Player>("Player").AddConstructor<>().AddConstructor<float>().AddDataMember(&Player::m_Derp, "Derp").AddMemberFunction(&Player::Print, "Print");
+
+	Reflect::Any playerObject = Reflect::Resolve("Player")->GetConstructor<>()->NewInstance();
+	Reflect::Resolve("Player")->GetMemberFunction("Print")->Invoke(playerObject, "Player 5 Stats: ");
+	// Print
+
 	//Example way to setup the system for use with your engine. 
 	Application::Log::InitializeLogger();
 
@@ -49,3 +60,4 @@ int main(int argc, int argv[])
 
 	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
 }
+*/

@@ -33,28 +33,34 @@
     <ClInclude Include="Demo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Reflect.h">
+    <ClInclude Include="RTTI\Any.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\TypeDescriptor.h">
+    <ClInclude Include="RTTI\Base.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Any.h">
+    <ClInclude Include="RTTI\Constructor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Constructor.h">
+    <ClInclude Include="RTTI\Conversion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Base.h">
+    <ClInclude Include="RTTI\DataMember.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\TypeFactory.h">
+    <ClInclude Include="RTTI\Function.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Conversion.h">
+    <ClInclude Include="RTTI\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RTTI\Function.h">
+    <ClInclude Include="RTTI\Reflect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RTTI\TypeDescriptor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RTTI\TypeFactory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,5 +80,13 @@
     <ClCompile Include="Logging\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RTTI_Demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RTTI\TypeDescriptor.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
