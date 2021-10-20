@@ -1,40 +1,37 @@
 #ifndef BASE_H
 #define BASE_H
-
 #include "TypeDescriptor.hpp"
 
-namespace Reflect
+namespace RTTI
 {
-
 	class Base
 	{
 	public:
-		const TypeDescriptor *GetType() const { return mType; }
+		const TypeDescriptor* GetType() const { return m_BaseType; }
 
-		virtual void *Cast(void *object) = 0;
+		virtual void* Cast(void* object) = 0; 
 
 	protected:
-		Base(TypeDescriptor const *type, const TypeDescriptor *parent)
-			: mParent(parent), mType(type) {}
+		Base(TypeDescriptor* const type, const TypeDescriptor* parent) : m_ParentType(parent), m_BaseType(type) {}
 
 	private:
-		const TypeDescriptor *mParent;
-		const TypeDescriptor *mType;
+		const TypeDescriptor* m_ParentType;
+		const TypeDescriptor* m_BaseType;
 	};
 
-	template <typename B, typename D>
-	class BaseImpl : public Base
+	template <typename Type, typename Base>
+	class BaseImplementation : public Base
 	{
 	public:
-		BaseImpl() : Base(Details::Resolve<B>(), Details::Resolve<D>()) {}
+		BaseImplementation() : Base(Details::Resolve<Base>(), Details::Resolve<Type>()) {}
 
-		void *Cast(void *object) override
+		// Cast any incoming object into our base type.
+		void* Cast(void* object) override
 		{
-			return static_cast<B*>(object);
+			return static_cast<Base*>(object);
 		}
 	};
+}
 
-}  // namespace Reflect
-
-#endif // BASE_H
+#endif
 

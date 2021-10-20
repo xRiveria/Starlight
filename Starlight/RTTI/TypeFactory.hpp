@@ -4,14 +4,13 @@
 #include <string>
 #include "TypeDescriptor.hpp"
 
-namespace Reflect
+namespace RTTI
 {
-
-	// fwd declaration
+	// Forward Declaration
 	template <typename Type>
 	class TypeFactory;
 
-	// variable template (one type factory per type)
+	// Variable Template (One Type Factory Instantiation per Type)
 	template <typename Type>
 	TypeFactory<Type> typeFactory;
 
@@ -19,18 +18,23 @@ namespace Reflect
 	class TypeFactory
 	{
 	public:
-		TypeFactory &ReflectType(const std::string &name)
+		TypeFactory& ReflectType(const std::string &name)
 		{
-			TypeDescriptor *typeDescriptor = Details::Resolve<Type>();
+			// Create a new Type Descriptor object for our newly serialized type.
+			TypeDescriptor* typeDescriptor = Details::Resolve<Type>();
 
-			typeDescriptor->mName = name;
+			// Sets its name internally.
+			typeDescriptor->m_Name = name;
+
+			// Registers the new type in our registry.
 			Details::GetTypeRegistry()[name] = typeDescriptor;
 
+			// Returns the type factory for this object.
 			return typeFactory<Type>;
 		}
 
 		template <typename... Args>
-		TypeFactory &AddConstructor()
+		TypeFactory& AddConstructor()
 		{
 			Details::Resolve<Type>()->template AddConstructor<Type, Args...>();
 
@@ -38,7 +42,7 @@ namespace Reflect
 		}
 
 		template <typename... Args>
-		TypeFactory &AddConstructor(Type (*ctorFun)(Args...))
+		TypeFactory& AddConstructor(Type (*ctorFun)(Args...))
 		{
 			Details::Resolve<Type>()->template AddConstructor<Type, Args...>(ctorFun);
 
@@ -46,17 +50,17 @@ namespace Reflect
 		}
 
 		template <typename Base>
-		TypeFactory &AddBase()
+		TypeFactory& AddBase()
 		{
-			static_assert(std::is_base_of<Base, Type>::value);  // Base must be a base of Type
+			static_assert(std::is_base_of<Base, Type>::value);  // Base must be a base of Type.
 
 			Details::Resolve<Type>()->template AddBase<Base, Type>();
 
 			return typeFactory<Type>;
 		}
 
-		template <typename T, typename U = Type>  // default template type param to allow for non class types
-		TypeFactory &AddDataMember(T U::*dataMemPtr, const std::string &name)
+		template <typename T, typename U = Type>  // Default template type parameter to allow for non-class types.
+		TypeFactory& AddDataMember(T U::*dataMemPtr, const std::string &name)
 		{
 			Details::Resolve<Type>()->AddDataMember(dataMemPtr, name);
 
@@ -64,58 +68,47 @@ namespace Reflect
 		}
 
 		template <auto Setter, auto Getter>
-		TypeFactory &AddDataMember(const std::string &name)
+		TypeFactory& AddDataMember(const std::string &name)
 		{
 			Details::Resolve<Type>()->template AddDataMember<Setter, Getter, Type>(name);
 
 			return typeFactory<Type>;
 		}
 
-		template <typename Ret, typename... Args>
-		TypeFactory &AddMemberFunction(Ret(*freeFun)(Args...), const std::string &name)
+		template <typename Return, typename... Args>
+		TypeFactory& AddMemberFunction(Return(*freeFun)(Args...), const std::string &name)
 		{
 			Details::Resolve<Type>()->AddMemberFunction(freeFun, name);
 
 			return typeFactory<Type>;
 		}
 
-		template <typename Ret, typename... Args, typename U = Type>
-		TypeFactory &AddMemberFunction(Ret(U::*memFun)(Args...), const std::string &name)
+		template <typename Return, typename... Args, typename U = Type>
+		TypeFactory& AddMemberFunction(Return(U::*memFun)(Args...), const std::string &name)
 		{
 			Details::Resolve<Type>()->AddMemberFunction(memFun, name);
 
 			return typeFactory<Type>;
 		}
 
-		template <typename Ret, typename... Args, typename U = Type>
-		TypeFactory &AddMemberFunction(Ret(U::*constMemFun)(Args...) const, const std::string &name)
+		template <typename Return, typename... Args, typename U = Type>
+		TypeFactory& AddMemberFunction(Return(U::*constMemFun)(Args...) const, const std::string &name)
 		{
 			Details::Resolve<Type>()->AddMemberFunction(constMemFun, name);
 
 			return typeFactory<Type>;
 		}
 
-		//template <typename FuncType, FuncType Func>
-		//template <auto Func>
-		//TypeFactory &AddMemberFunction(const std::string &name)
-		//{
-		//	Details::Resolve<Type>()->template AddMemberFunction<FunctType, Func>(name);
-		//	Details::Resolve<Type>()->template AddMemberFunction<Func>(name);
-
-		//	return typeFactory<Type>;
-		//}
-
 		template <typename To>
-		TypeFactory &AddConversion()
+		TypeFactory& AddConversion()
 		{
-			static_assert(std::is_convertible_v<Type, To>);  // a conversion Type -> To must exist
+			static_assert(std::is_convertible_v<Type, To>);  // A conversion from Type -> To must exist.
 
 			Details::Resolve<Type>()->template AddConversion<Type, To>();
 
 			return typeFactory<Type>;
 		}
 	};
+} 
 
-}  // namespace Reflect
-
-#endif // TYPE_FACTORY_H
+#endif

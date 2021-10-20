@@ -4,39 +4,35 @@
 #include "TypeDescriptor.hpp"
 #include "Any.hpp"
 
-namespace Reflect
+namespace RTTI
 {
-
 	class Conversion
 	{
 	public:
-		const TypeDescriptor *GetFromType() const { return mFromType; }
-		const TypeDescriptor *GetToType() const { return mToType; }
+		const TypeDescriptor* GetFromType() const { return m_FromType; }
+		const TypeDescriptor* GetToType() const { return m_ToType; }
 
-		virtual Any Convert(const void *object) const = 0;
+		virtual Any Convert(const void* object) const = 0;
 
 	protected:
-		Conversion(const TypeDescriptor *from, const TypeDescriptor *to)
-			: mFromType(from), mToType(to) {}
+		Conversion(const TypeDescriptor *from, const TypeDescriptor *to) : m_FromType(from), m_ToType(to) {}
 
 	private:
-		const TypeDescriptor *mFromType;  // type to convert from
-		const TypeDescriptor *mToType;    // type to convert to
+		const TypeDescriptor* m_FromType;  // Type to convert from.
+		const TypeDescriptor* m_ToType;    // Type to convert to.
 	};
 
 	template <typename From, typename To>
-	class ConversionImpl : public Conversion
+	class ConversionImplementation : public Conversion
 	{
 	public:
-		ConversionImpl() : Conversion(Details::Resolve<From>(), Details::Resolve<To>()) {}
+		ConversionImplementation() : Conversion(Details::Resolve<From>(), Details::Resolve<To>()) {}
 
-		Any Convert(const void *object) const override
+		Any Convert(const void* object) const override
 		{
-			//return To(*static_cast<const From*>(object));
 			return static_cast<To>(*static_cast<const From*>(object));
 		}
 	};
-
 }
 
 #endif // CONVERSION_H

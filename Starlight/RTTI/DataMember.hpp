@@ -5,27 +5,26 @@
 #include "TypeDescriptor.hpp"
 #include "Any.hpp"
 
-namespace Reflect
+namespace RTTI
 {
-
 	class DataMember
 	{
 	public:
-		std::string GetName() const { return mName; }
-		const TypeDescriptor *GetParent() const { return mParent; }
-		const TypeDescriptor *GetType() const { return mType; }
+		std::string GetName() const { return m_Name; }
+		const TypeDescriptor* GetParent() const { return m_DataClass; }
+		const TypeDescriptor* GetType() const { return m_DataType; }
 
-		virtual void Set(AnyRef objectRef, const Any value) = 0;
+		virtual void Set(AnyRef objectReference, const Any value) = 0;
 		virtual Any Get(Any object) = 0;
 
 	protected:
 		DataMember(const std::string &name, const TypeDescriptor *type, const TypeDescriptor *parent)
-			: mName(name), mType(type), mParent(parent) {}
+			     : m_Name(name), m_DataType(type), m_DataClass(parent) { }
 
 	private:
-		std::string mName;                 
-		const TypeDescriptor *mType;    // type of the data member
-		const TypeDescriptor *mParent;  // type of the data member's class
+		std::string m_Name;                 
+		const TypeDescriptor* m_DataType;    // Type of the data member.
+		const TypeDescriptor* m_DataClass;   // Type of the data member's class
 	};
 
 	template <typename Class, typename Type>
@@ -34,11 +33,6 @@ namespace Reflect
 	public:
 		PtrDataMember(Type Class::*dataMemberPtr, const std::string name)
 			: DataMember(name, Details::Resolve<Type>(), Details::Resolve<Class>()), mDataMemberPtr(dataMemberPtr) {}
-
-		// void Set(AnyRef objectRef, const Any value) override
-		// {
-		// 	SetImpl(objectRef, value);  // use SFINAE
-		// }
 
 		void Set(AnyRef objectRef, const Any value) override
 		{
@@ -50,7 +44,9 @@ namespace Reflect
 			Class *obj = object.TryCast<Class>();
 
 			if (!obj)
+			{
 				throw BadCastException(Details::Resolve<Class>()->GetName(), object.GetType()->GetName());
+			}
 
 			return obj->*mDataMemberPtr;
 		}
@@ -58,28 +54,8 @@ namespace Reflect
 	private:
 		Type Class::*mDataMemberPtr;
 
-		////// use SFINAE
-		// template <typename U = Type, typename = typename std::enable_if<!std::is_const<U>::value>::type>
-		// void SetImpl(Any object, const Any value)
-		// {
-		// 	Class *obj = object.TryCast<Class>();
-		// 	if (!obj)
-		// 		throw BadCastException(Details::Resolve<Type>()->GetName(), object.GetType()->GetName(), "object:");
-	
-		// 	Any val = value.TryConvert<Type>();
-	
-		// 	if (!val)
-		// 		throw BadCastException(Details::Resolve<Type>()->GetName(), value.GetType()->GetName(), "value:");
-		// 	obj->*mDataMemberPtr = val.TryCast<Type>();
-		// }
-
-		// template <typename U = Type, typename = typename std::enable_if<std::is_const<U>::value>::type, typename = void>
-		// void SetImpl(Any object, const Any value)
-		// {
-		// 	static_assert(false, "can't set const data member");
-		// }
-
-		////// use tag dispatch
+	private:
+		// Use tag dispatch.
 		void SetImpl(Any object, const Any value, std::false_type)
 		{
 			Class *obj = object.TryCast<Class>();  // pointers to members of base class can be used with derived class
@@ -134,8 +110,7 @@ namespace Reflect
 		using MemberType = Details::RawType<typename decltype(ToFunctionHelper(Getter))::ReturnType>;
 
 	public:
-		SetGetDataMember(const std::string name)
-			: DataMember(name, Details::Resolve<MemberType>(), Details::Resolve<Class>()) {}
+		SetGetDataMember(const std::string name) : DataMember(name, Details::Resolve<MemberType>(), Details::Resolve<Class>()) {}
 
 		void Set(AnyRef objectRef, const Any value) override
 		{
@@ -143,7 +118,9 @@ namespace Reflect
 			Class *obj = a.TryCast<Class>();
 
 			if (!obj)
+			{
 				throw BadCastException(Details::Resolve<Class>()->GetName(), Any(objectRef).GetType()->GetName(), "object:");
+			}
 
 			MemberType const *casted = nullptr;
 			Any val;
@@ -154,17 +131,20 @@ namespace Reflect
 			}
 
 			if (!casted)
+			{
 				throw BadCastException(Details::Resolve<MemberType>()->GetName(), value.GetType()->GetName(), "value:");
+			}
 
 			if constexpr (std::is_member_function_pointer_v<decltype(Setter)>)
+			{
 				(obj->*Setter)(*casted);
+			}
 			else
 			{
 				static_assert(std::is_function_v<std::remove_pointer_t<decltype(Setter)>>);
 
 				Setter(*obj, *casted);
 			}
-
 		}
 
 		Any Get(Any object) override
@@ -172,10 +152,14 @@ namespace Reflect
 			Class *obj = object.TryCast<Class>();
 
 			if (!obj)
+			{
 				throw BadCastException(Details::Resolve<Class>()->GetName(), object.GetType()->GetName());
+			}
 
 			if constexpr (std::is_member_function_pointer_v<decltype(Setter)>)
+			{
 				return (obj->*Getter)();
+			}
 			else
 			{
 				static_assert(std::is_function_v<std::remove_pointer_t<decltype(Getter)>>);
@@ -184,7 +168,6 @@ namespace Reflect
 			}
 		}
 	};
+}
 
-}  // namespace Reflect
-
-#endif // DATA_MEMBER_H
+#endif

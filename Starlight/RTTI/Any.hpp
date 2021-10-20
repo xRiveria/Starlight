@@ -8,12 +8,14 @@
 #include <exception>
 #include "TypeDescriptor.hpp"
 
-namespace Reflect
-{
+/*
+	The Any class is the representation of our object.
+*/
 
+namespace RTTI
+{
 	namespace Details
 	{
-
 		template <std::size_t SIZE, std::size_t ALIGNMENT = alignof(std::max_align_t)>
 		struct AlignedStorage
 		{

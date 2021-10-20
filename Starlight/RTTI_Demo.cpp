@@ -3,140 +3,38 @@
 #include <string>
 #include <iostream>
 
-struct Vector3D
-{
-	float x;
-	float y;
-	float z;
-};
-
-class Player
-{
-public:
-	Player() : id(10) {}
-	Player(int id) : id(id) {}
-	Player(int id, const std::string &name) : id(id), name(name) {}
-	Player(Vector3D const &position) : position(position) {}
-
-	Player GetThis() const { return *this; }
-
-	void SetId(int id) { Player::id = id; }
-	int GetId() const { return id; }
-
-	void SetName(const std::string &name) { this->name = name; }
-	std::string GetName() const { return name; }
-
-	void SetPosition(Vector3D position) { this->position = position; }
-	Vector3D GetPosition() const { return position; }
-
-	void Print(const std::string &s) const
-	{
-		std::cout << s << '\n';
-		std::cout << "player id: " << id << ", name: " << name << ", health: " << health << '\n';
-		std::cout << "position: " << position.x << ", y: " << position.y << ", z: " << position.z << std::endl;
-		std::cout << std::endl;
-	}
-
-	std::string SayHello() const { return "hello from " + name + "!"; }
-
-	float health = 100.0f;
-
-	int *iptr;
-private:
-	int id = 11;
-	std::string name = "Mario";
-	Vector3D position;
-};
-
-Player PlayerCtorFun(const std::string &name, int id)
-{
-	Player player(42, "Geralt");
-
-	return player;
-}
-
 using nlohmann::json;
 
-void to_json(json &j, const Vector3D &a)
+void Print(std::ostream& os, RTTI::Any object)
 {
-	j["x"] = a.x;
-	j["y"] = a.y;
-	j["z"] = a.z;
-}
+	const RTTI::TypeDescriptor* typeDescriptor = object.GetType();
+	os << typeDescriptor->GetName() << "::" << "\n";
 
-void from_json(const json &j, Vector3D &a)
-{
-	j.at("x").get_to(a.x);
-	j.at("y").get_to(a.y);
-	j.at("z").get_to(a.z);
-}
-
-void to_json(json &j, const Player &a)
-{
-	j["id"] = a.GetId();
-	j["name"] = a.GetName();
-	j["position"] = a.GetPosition();
-	j["health"] = a.health;
-}
-
-void from_json(const json &j, Player &a)
-{
-	a.SetId(j.at("id").get<int>());
-	a.SetName(j.at("name").get<std::string>());
-	a.SetPosition(j.at("position").get<Vector3D>());
-	a.health = j.at("health");
-}
-
-void Serialize(json &j, const Player &a)
-{
-	j = a;
-}
-
-void Deserialize(const json &j, Player &a)
-{
-	a = j;
-}
-
-void Print(std::ostream &os, Reflect::Any object)
-{
-	Reflect::TypeDescriptor const *td = object.GetType();
-	os << td->GetName() << "::" << std::endl;
-
-	for (auto *dataMember : td->GetDataMembers())
+	for (RTTI::DataMember* dataMember : typeDescriptor->GetDataMembers())
 	{
-		auto *ftd = dataMember->GetType();
+		const RTTI::TypeDescriptor* dataMemberType = dataMember->GetType();
 
-		//if (ftd == Reflect::Resolve<int>())
-		//	os << "int: " << *dataMember->Get(object).TryCast<int>() << std::endl;
-		//else if (ftd == Reflect::Resolve<float>())
-		//	os << "float: " << *dataMember->Get(object).TryCast<float>() << std::endl;
-		//else if (ftd == Reflect::Resolve<std::string>())
-		//	os << "string: " << *dataMember->Get(object).TryCast<std::string>() << std::endl;
-
-		if (auto mf = ftd->GetMemberFunction("print"); mf)
-			mf->Invoke(Reflect::AnyRef(), dataMember->Get(object));
+		if (const RTTI::Function* memberFunction = typeDescriptor->GetMemberFunction("print"); memberFunction)
+		{
+			memberFunction->Invoke(RTTI::AnyRef(), dataMember->Get(object));
+		}
 		else
+		{
 			Print(os, dataMember->Get(object));
+		}
 	}
 }
 
 template <typename T>
 void Print(const T &t)
 {
-	std::cout << Reflect::Resolve<T>()->GetName() << ": " << t << std::endl;
+	std::cout << RTTI::GetType<T>()->GetName() << ": " << t << std::endl;
 }
-
-// useless ?
-//template <typename T>
-//void PrintAny(Reflect::Any any)
-//{
-//	std::cout << any.GetType()->GetName() << ": " << any.TryCast<T>() << std::endl;
-//}
-
 
 class Pokemon
 {
 public:
+	Pokemon() {}
 	Pokemon(const std::string& pokemonName) : m_PokemonName(pokemonName) { }
 
 	void Print(const std::string& name)
@@ -145,54 +43,95 @@ public:
 		std::cout << m_PokemonName << "\n";
 	}
 
+	float GetPokemonHealth() const { return m_PokemonHealth; }
+	void SetPokemonHealth(float newHealth) { m_PokemonHealth = newHealth; }
+
+	std::string GetName() const { return m_PokemonName; }
+
 public:
-	std::string m_PokemonName;
+	std::string m_PokemonName = "Pikachu";
+
+private:
+	float m_PokemonHealth = 0.0f;
 };
 
-void SerializePokemon(json& json, Pokemon* pokemon)
+void to_json(json& j, const Pokemon& a)
 {
+	j["PokemonName"] = a.m_PokemonName;
+	j["PokemonHealth"] = a.GetPokemonHealth();
+}
 
+void from_json(const json& j, Pokemon& a)
+{
+	a.m_PokemonName = j.at("PokemonName");
+	a.SetPokemonHealth(j.at("PokemonHealth"));
+}
+
+void SerializePokemon(json& json, const Pokemon& pokemon)
+{
+	json = pokemon;
+}
+
+void DeserializePokemon(const json& json, Pokemon& pokemon)
+{
+	pokemon = json;
 }
 
 int main(int argc, char **argv)
 {
 	// reflect types
-	Reflect::Reflect<int>("int")
+	RTTI::Reflect<int>("int")
 		.AddMemberFunction(&Print<int>, "print");
 
-	Reflect::Reflect<float>("float")
+	RTTI::Reflect<float>("float")
 		.AddMemberFunction(&Print<float>, "print");
 
-	Reflect::Reflect<std::string>("string")
+	RTTI::Reflect<std::string>("string")
 		.AddConstructor<const char*>()
 		.AddMemberFunction(&Print<std::string>, "print");
 
-	Reflect::Reflect<double>("double")
+	RTTI::Reflect<double>("double")
 		.AddConversion<int>();
 
-	Reflect::Reflect<const char*>("cstring")
+	RTTI::Reflect<const char*>("cstring")
 		.AddConversion<std::string>();
 
+	// Register class with our reflection.
+	RTTI::Reflect<Pokemon>("Pokemon")
+		.AddConstructor<>()
+		.AddConstructor<const std::string&>()
+		.AddDataMember(&Pokemon::m_PokemonName, "PokemonName")
+		.AddDataMember<&Pokemon::SetPokemonHealth, &Pokemon::GetPokemonHealth>("Health")
+		.AddMemberFunction(&Pokemon::Print, "Print")
+		.AddMemberFunction(&SerializePokemon, "Serialize")
+		.AddMemberFunction(&DeserializePokemon, "Deserialize");
 
+	auto pokemon = RTTI::GetType("Pokemon")->GetConstructor<const std::string&>()->NewInstance("Raichu");
+	RTTI::GetType("Pokemon")->GetMemberFunction("Print")->Invoke(pokemon, "This Pokemon Name Is");
+	RTTI::GetType("Pokemon")->GetDataMember("Health")->Set(pokemon, 500.0f);
 
-
-
-
-	Reflect::Reflect<Pokemon>("Pokemon").AddConstructor<const std::string&>().AddDataMember(&Pokemon::m_PokemonName, "PokemonName").AddMemberFunction(&Pokemon::Print, "Print");
-	auto pokemon = Reflect::Resolve("Pokemon")->GetConstructor<const std::string&>()->NewInstance("Raichu");
-	Reflect::Resolve("Pokemon")->GetMemberFunction("Print")->Invoke(pokemon, "This Pokemon Name Is");
+	Print(std::cout, pokemon);
 
 	// Serialize Existing Data
+	std::cout << "Serialization\n";
+	json jj;
+	RTTI::GetType("Pokemon")->GetMemberFunction("Serialize")->Invoke(RTTI::AnyRef(), RTTI::AnyRef(jj), pokemon);
+	std::cout << "Json Data: " << jj << "\n";
+
+	// Deserialize Data
+	auto pokemon2 = RTTI::GetType("Pokemon")->GetConstructor<>()->NewInstance();
+	RTTI::GetType("Pokemon")->GetMemberFunction("Deserialize")->Invoke(RTTI::AnyRef(), jj, RTTI::AnyRef(pokemon2));
+	RTTI::GetType("Pokemon")->GetMemberFunction("Print")->Invoke(pokemon2, RTTI::Any("Deserializing Time!"));
+
+	static_cast<Pokemon*>(pokemon2.Get())->Print("Type Cast");
+
+	// C++ Types
+	auto stringTest = RTTI::GetType("string")->GetConstructor<const char*>()->NewInstance("Hello");
+	std::cout << *stringTest.TryCast<std::string>();
 
 
 
-
-
-
-
-
-
-
+	/*
 	Reflect::Reflect<Vector3D>("Vector3D")
 		.AddDataMember(&Vector3D::x, "x")
 		.AddDataMember(&Vector3D::y, "y")
@@ -259,6 +198,6 @@ int main(int argc, char **argv)
 
 	auto s = Reflect::Resolve("string")->GetConstructor<const char*>()->NewInstance("hello");
 	std::cout << *s.TryCast<std::string>() << std::endl;
-
+	*/
 	return 0;
 }

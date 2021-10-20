@@ -8,185 +8,212 @@
 #include "Base.hpp"
 #include "Conversion.hpp"
 
-namespace Reflect
+namespace RTTI
 {
-
 	template <typename Type, typename... Args>
 	void TypeDescriptor::AddConstructor()
 	{
-		Constructor *constructor = new ConstructorImpl<Type, Args...>();
+		Constructor* constructor = new ConstructorImplementation<Type, Args...>();
 
-		mConstructors.push_back(constructor);
+		m_Constructors.push_back(constructor);
 	}
 
 	template <typename Type, typename... Args>
 	void TypeDescriptor::AddConstructor(Type(*ctorFun)(Args...))
 	{
-		Constructor *constructor = new FreeFunConstructor<Type, Args...>(ctorFun);
+		Constructor* constructor = new FreeFunctionConstructor<Type, Args...>(ctorFun);
 
-		mConstructors.push_back(constructor);
+		m_Constructors.push_back(constructor);
 	}
 
 	template <typename B, typename T>
 	void TypeDescriptor::AddBase()
 	{
-		Base *base = new BaseImpl<B, T>;
+		Base* base = new BaseImplementation<B, T>;
 
-		mBases.push_back(base);
+		m_Bases.push_back(base);
 	}
 
 	template <typename C, typename T>
 	void TypeDescriptor::AddDataMember(T C::*dataMemPtr, const std::string &name)
 	{
-		DataMember *dataMember = new PtrDataMember<C, T>(dataMemPtr, name);
+		DataMember* dataMember = new PtrDataMember<C, T>(dataMemPtr, name);
 
-		mDataMembers.push_back(dataMember);
+		m_DataMembers.push_back(dataMember);
 	}
 
 	template <auto Setter, auto Getter, typename Type>
 	void TypeDescriptor::AddDataMember(const std::string &name)
 	{
-		DataMember *dataMember = new SetGetDataMember<Setter, Getter, Type>(name);
+		DataMember* dataMember = new SetGetDataMember<Setter, Getter, Type>(name);
 
-		mDataMembers.push_back(dataMember);
+		m_DataMembers.push_back(dataMember);
 	}
 
-	template <typename Ret, typename... Args>
-	void TypeDescriptor::AddMemberFunction(Ret freeFun(Args...), const std::string &name)
+	template <typename Return, typename... Args>
+	void TypeDescriptor::AddMemberFunction(Return freeFun(Args...), const std::string &name)
 	{
-		Function *memberFunction = new FreeFunction<Ret, Args...>(freeFun, name);
+		Function* memberFunction = new FreeFunction<Return, Args...>(freeFun, name);
 
-		mMemberFunctions.push_back(memberFunction);
+		m_MemberFunctions.push_back(memberFunction);
 	}
 
-	template <typename C, typename Ret, typename... Args>
-	void TypeDescriptor::AddMemberFunction(Ret(C::*memFun)(Args...), const std::string &name)
+	template <typename C, typename Return, typename... Args>
+	void TypeDescriptor::AddMemberFunction(Return(C::*memFun)(Args...), const std::string& name)
 	{
-		Function *memberFunction = new MemberFunction<C, Ret, Args...>(memFun, name);
+		Function* memberFunction = new MemberFunction<C, Return, Args...>(memFun, name);
 
-		mMemberFunctions.push_back(memberFunction);
+		m_MemberFunctions.push_back(memberFunction);
 	}
 
-	template <typename C, typename Ret, typename... Args>
-	void TypeDescriptor::AddMemberFunction(Ret(C::*memFun)(Args...) const, const std::string &name)
+	template <typename C, typename Return, typename... Args>
+	void TypeDescriptor::AddMemberFunction(Return(C::*memFun)(Args...) const, const std::string &name)
 	{
-		Function *memberFunction = new ConstMemberFunction<C, Ret, Args...>(memFun, name);
+		Function* memberFunction = new ConstMemberFunction<C, Return, Args...>(memFun, name);
 
-		mMemberFunctions.push_back(memberFunction);
+		m_MemberFunctions.push_back(memberFunction);
 	}
 
 	template <typename From, typename To>
 	void TypeDescriptor::AddConversion()
 	{
-		Conversion *conversion = new ConversionImpl<From, To>;
+		Conversion* conversion = new ConversionImplementation<From, To>;
 
-		mConversions.push_back(conversion);
+		m_Conversions.push_back(conversion);
 	}
 
 	inline std::string const &TypeDescriptor::GetName() const
 	{ 
-		return mName; 
+		return m_Name; 
 	}
-
-	//inline std::size_t TypeDescriptor::GetSize() const
-	//{ 
-	//	return mSize; 
-	//}
 
 	inline std::vector<Constructor*> TypeDescriptor::GetConstructors() const
 	{ 
-		return mConstructors; 
+		return m_Constructors; 
 	}
 
 	template <typename... Args>
-	const Constructor *TypeDescriptor::GetConstructor() const
+	const Constructor* TypeDescriptor::GetConstructor() const
 	{
-		for (auto *constructor : mConstructors)
+		for (auto* constructor : m_Constructors)
+		{
 			if (constructor->CanConstruct<Args...>(std::index_sequence_for<Args...>()))
-				//if (constructor->CanConstruct<Args...>(std::make_index_sequence<sizeof...(Args)>()))
+			{
 				return constructor;
+			}
+		}
 
 		return nullptr;
 	}
 
 	inline std::vector<Base*> TypeDescriptor::GetBases() const
 	{ 
-		return mBases; 
+		return m_Bases; 
 	}
 
 	template <typename B>
-	Base *TypeDescriptor::GetBase() const
+	Base* TypeDescriptor::GetBase() const
 	{
-		for (auto base : mBases)
+		for (auto base : m_Bases)
+		{
 			if (base->GetType() == Details::Resolve<B>)
+			{
 				return base;
+			}
+		}
 
 		return nullptr;
 	}
 
 	inline std::vector<DataMember*> TypeDescriptor::GetDataMembers() const
 	{
-		std::vector<DataMember*> dataMembers(mDataMembers);
+		std::vector<DataMember*> dataMembers(m_DataMembers);
 
-		for (auto *base : mBases)
+		for (auto* base : m_Bases)
+		{
 			for (auto dataMember : base->GetType()->GetDataMembers())
+			{
 				dataMembers.push_back(dataMember);
+			}
+		}
 
 		return dataMembers;
 	}
 
-	inline DataMember *TypeDescriptor::GetDataMember(const std::string &name) const
+	inline DataMember* TypeDescriptor::GetDataMember(const std::string& name) const
 	{
-		for (auto *dataMember : mDataMembers)
+		for (auto* dataMember : m_DataMembers)
+		{
 			if (dataMember->GetName() == name)
+			{
 				return dataMember;
+			}
+		}
 
-		for (auto *base : mBases)
-			if (auto *baseDataMember = base->GetType()->GetDataMember(name))
+		for (auto* base : m_Bases)
+		{
+			if (auto* baseDataMember = base->GetType()->GetDataMember(name))
+			{
 				return baseDataMember;
+			}
+		}
 
 		return nullptr;
 	}
 
 	inline std::vector<Function*> TypeDescriptor::GetMemberFunctions() const
 	{
-		std::vector<Function*> memberFunctions(mMemberFunctions);
+		std::vector<Function*> memberFunctions(m_MemberFunctions);
 
-		for (auto *base : mBases)
+		for (auto* base : m_Bases)
+		{
 			for (auto memberFunction : base->GetType()->GetMemberFunctions())
+			{
 				memberFunctions.push_back(memberFunction);
+			}
+		}
 
 		return memberFunctions;
 	}
 
-	inline const Function *TypeDescriptor::GetMemberFunction(const std::string &name) const
+	inline const Function* TypeDescriptor::GetMemberFunction(const std::string &name) const
 	{
-		for (auto *memberFunction : mMemberFunctions)
+		for (auto* memberFunction : m_MemberFunctions)
+		{
 			if (memberFunction->GetName() == name)
+			{
 				return memberFunction;
+			}
+		}
 
-		for (auto *base : mBases)
-			if (auto *memberFunction = base->GetType()->GetMemberFunction(name))
+		for (auto* base : m_Bases)
+		{
+			if (auto* memberFunction = base->GetType()->GetMemberFunction(name))
+			{
 				return memberFunction;
+			}
+		}
 
 		return nullptr;
 	}
 
 	inline std::vector<Conversion*> TypeDescriptor::GetConversions() const
 	{ 
-		return mConversions; 
+		return m_Conversions; 
 	}
 
 	template <typename To>
-	Conversion *TypeDescriptor::GetConversion() const
+	Conversion* TypeDescriptor::GetConversion() const
 	{
-		for (auto conversion : mConversions)
+		for (auto conversion : m_Conversions)
+		{
 			if (conversion->GetToType() == Details::Resolve<To>())
+			{
 				return conversion;
+			}
+		}
 
 		return nullptr;
 	}
-
-}  // namespace Reflect
-
-#endif  // TYPE_DESCRIPTOR_INL
+} 
+#endif 

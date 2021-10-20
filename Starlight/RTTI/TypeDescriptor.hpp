@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 
-namespace Reflect
+namespace RTTI
 {
-	// fwd declarations
+	// Forward Declarations
 	class DataMember;
 	class Function;
 	class Constructor;
@@ -22,89 +22,86 @@ namespace Reflect
 	namespace Details
 	{
 		template <typename Type>
-		TypeDescriptor *Resolve();
+		TypeDescriptor* Resolve();
 
 		template <typename Type>
-		TypeDescriptor *Resolve(Type&&);
+		TypeDescriptor* Resolve(Type&&);
 	}	
 
 	class TypeDescriptor
 	{
 		template <typename> friend class TypeFactory;
 
-		template <typename Type> friend TypeDescriptor *Details::Resolve();
-		template <typename Type> friend TypeDescriptor *Details::Resolve(Type&&);
+		template <typename Type> friend TypeDescriptor* Details::Resolve();
+		template <typename Type> friend TypeDescriptor* Details::Resolve(Type&&);
 
 	public:
-		template <typename Type, typename... Args>
+		template <typename Type, typename ...Args>
 		void AddConstructor();
 
-		template <typename Type, typename... Args>
-		void AddConstructor(Type (*)(Args...));
+		template <typename Type, typename ...Args>
+		void AddConstructor(Type(*)(Args...));
 
 		template <typename B, typename T>
 		void AddBase();
 
 		template <typename C, typename T>
-		void AddDataMember(T C::*dataMemPtr, const std::string &name);
+		void AddDataMember(T C::*dataMemPtr, const std::string& name);
 
 		template <auto Setter, auto Getter, typename Type>
-		void AddDataMember(const std::string &name);
+		void AddDataMember(const std::string& name);
 
-		template <typename Ret, typename... Args>
-		void AddMemberFunction(Ret freeFun(Args...), const std::string &name);
+		template <typename Return, typename... Args>
+		void AddMemberFunction(Return freeFun(Args...), const std::string& name);
 
-		template <typename C, typename Ret, typename... Args>
-		void AddMemberFunction(Ret(C::*memFun)(Args...), const std::string &name);
+		template <typename C, typename Return, typename... Args>
+		void AddMemberFunction(Return(C::*memFun)(Args...), const std::string& name);
 
-		template <typename C, typename Ret, typename... Args>
-		void AddMemberFunction(Ret(C::*memFun)(Args...) const, const std::string &name);
+		template <typename C, typename Return, typename... Args>
+		void AddMemberFunction(Return(C::*memFun)(Args...) const, const std::string& name);
 
 		template <typename From, typename To>
 		void AddConversion();
 
-		std::string const &GetName() const;
-
-		//std::size_t GetSize() const;
+		const std::string& GetName() const;
 
 		std::vector<Constructor*> GetConstructors() const;
 
 		template <typename... Args>
-		const Constructor *GetConstructor() const;
+		const Constructor* GetConstructor() const;
 
 		std::vector<Base*> GetBases() const;
 
 		template <typename B>
-		Base *GetBase() const;
+		Base* GetBase() const;
 
 		std::vector<DataMember*> GetDataMembers() const;
 
-		DataMember *GetDataMember(const std::string &name) const;
+		DataMember* GetDataMember(const std::string &name) const;
 
 		std::vector<Function*> GetMemberFunctions() const;
 
-		const Function *GetMemberFunction(const std::string &name) const;
+		const Function* GetMemberFunction(const std::string& name) const;
 
 		std::vector<Conversion*> GetConversions() const;
 
 		template <typename To>
-		Conversion *GetConversion() const;
+		Conversion* GetConversion() const;
 
 	private:
-		std::string mName;
-		//std::size_t mSize;
+		std::string m_Name;
 
-		std::vector<Base*> mBases;
-		std::vector<Conversion*> mConversions;
-		std::vector<Constructor*> mConstructors;
-		std::vector<DataMember*> mDataMembers;
-		std::vector<Function*> mMemberFunctions;
+		std::vector<Base*> m_Bases;
+		std::vector<Conversion*> m_Conversions;
+		std::vector<Constructor*> m_Constructors;
+		std::vector<DataMember*> m_DataMembers;
+		std::vector<Function*> m_MemberFunctions;
 
-		bool mIsPointer;
-		bool mIsReference;
-		bool mIsFunction;
-		bool mIsDataMember;
-		bool mIsMemberFunction;
+		bool m_IsPointer;
+		bool m_IsReference;
+		bool m_IsFunction;
+		bool m_IsDataMember;
+		bool m_IsMemberFunction;
 	};
 
 	namespace Details
@@ -137,22 +134,22 @@ namespace Reflect
 		using RawType = typename std::remove_cv<remove_all_ref_ptr_t<T>>::type;
 
 		template <typename T>
-		static TypeDescriptor &GetTypeDescriptor()
+		static TypeDescriptor& GetTypeDescriptor()
 		{
-			static TypeDescriptor typeDescriptor;  // single instance of type descriptor per reflected type
+			static TypeDescriptor typeDescriptor;  // There is a single instance of Type Descriptor per reflected type.
 
 			return typeDescriptor;
 		}
 
 		template <typename Type>
-		TypeDescriptor *&GetTypeDescriptorPtr()
+		TypeDescriptor*& GetTypeDescriptorPtr()
 		{
-			static TypeDescriptor *typeDescriptorPtr = nullptr;
+			static TypeDescriptor* typeDescriptorPtr = nullptr;
 
 			return typeDescriptorPtr;
 		}
 
-		inline auto &GetTypeRegistry()
+		inline std::map<std::string, TypeDescriptor*>& GetTypeRegistry()
 		{
 			static std::map<std::string, TypeDescriptor*> typeRegistry;
 
@@ -160,48 +157,38 @@ namespace Reflect
 		}
 
 		template <typename Type>
-		TypeDescriptor *Resolve()
+		TypeDescriptor* Resolve()
 		{
 			if (!GetTypeDescriptorPtr<RawType<Type>>())
 			{
-				GetTypeDescriptorPtr<RawType<Type>>() = &GetTypeDescriptor<RawType<Type>>();  // create a type descriptor if not present
-
-				//if constexpr (std::is_same<RawType<Type>, void>::value)
-				//	typeDescriptor<RawType<Type>>.mSize = 0;
-				//else
-				//	typeDescriptor<RawType<Type>>.mSize = sizeof(RawType<Type>);
+				GetTypeDescriptorPtr<RawType<Type>>() = &GetTypeDescriptor<RawType<Type>>();  // Create a type descriptor if not present.
 			}
 
 			return GetTypeDescriptorPtr<RawType<Type>>();
 		}
 
-		inline TypeDescriptor *Resolve(const std::string &name)
+		inline TypeDescriptor* Resolve(const std::string &name)
 		{
 			if (auto it = GetTypeRegistry().find(name); it != GetTypeRegistry().end())
+			{
 				return it->second;
+			}
 
 			return nullptr;
 		}
 
 		template <typename Type>
-		TypeDescriptor *Resolve(Type &&object)
+		TypeDescriptor* Resolve(Type &&object)
 		{
 			if (!GetTypeDescriptorPtr<RawType<Type>>())
 			{
-				GetTypeDescriptorPtr<RawType<Type>>() = &GetTypeDescriptor<RawType<Type>>();   // create a type descriptor if not present
-
-				//if constexpr (std::is_same<RawType<Type>, void>::value)
-				//	typeDescriptor<RawType<Type>>.mSize = 0;
-				//else
-				//	typeDescriptor<RawType<Type>>.mSize = sizeof(RawType<Type>);
+				GetTypeDescriptorPtr<RawType<Type>>() = &GetTypeDescriptor<RawType<Type>>();   // Create a type descriptor if not present.
 			}
 
 			return GetTypeDescriptorPtr<RawType<Type>>();
 		}
-
-	}  // namespace Details
-
-}  // namespace Reflect
+	}  
+} 
 
 #include "DataMember.hpp"
 #include "Function.hpp"
@@ -211,4 +198,4 @@ namespace Reflect
 
 #include "TypeDescriptor.inl"
 
-#endif // TYPE_DESCRIPTOR_H
+#endif 
