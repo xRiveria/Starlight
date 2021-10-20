@@ -164,9 +164,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="IO\FileSystem.h" />
     <ClInclude Include="Logging\BacktraceBuffer.h" />
     <ClInclude Include="Logging\ConsoleState.h" />
-    <ClInclude Include="Logging\FileSystem.h" />
+    <ClInclude Include="Logging\FileSystemA.h" />
     <ClInclude Include="Logging\LogUtilities.h" />
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="RTTI\Any.hpp" />
@@ -182,11 +183,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="IO\FileSystem.cpp" />
     <ClCompile Include="Logging\BacktraceBuffer.cpp" />
     <ClCompile Include="Logging\ConsoleState.cpp" />
-    <ClCompile Include="Logging\FileSystem.cpp" />
+    <ClCompile Include="Logging\FileSystemA.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
-    <ClCompile Include="RTTI_Demo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RTTI\TypeDescriptor.inl" />

@@ -1,4 +1,0 @@
-[INITIALIZE] [19H:44M:43S] Aurora Engine: Initialized Starlight Logger!
-[INFO] [19H:44M:43S] Aurora Engine: 51 enemies destroyed in this level.
-[WARNING] [19H:44M:43S] Aurora Engine: 5 GPU Cycles Recorded! Bad!
-[ERROR] [19H:44M:43S] Aurora Engine: Your backend named Aurora has crashed!

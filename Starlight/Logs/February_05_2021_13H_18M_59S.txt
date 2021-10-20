@@ -1,4 +1,0 @@
-[INITIALIZE] [13H:18M:59S] Application Name: Initialized Starlight Logger!
-[INFO] [13H:18M:59S] Application Name: 51 enemies destroyed in this level.
-[WARNING] [13H:18M:59S] Application Name: 5 GPU Cycles Recorded! Bad!
-[ERROR] [13H:18M:59S] Application Name: Your backend named Aurora has crashed!

@@ -176,7 +176,7 @@ namespace Starlight
 		if (m_LogToFile && value)
 		{
 			//Each time the program runs, we should create a new file with time and date as its name if enabled.
-			m_LogFileName = FileSystem::CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
+			m_LogFileName = FileSystemA::CreateNewFile(RetrieveCurrentTime(LogTimeMode::File));
 		}
 	}
 

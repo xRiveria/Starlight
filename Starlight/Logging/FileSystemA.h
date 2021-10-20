@@ -3,7 +3,7 @@
 
 namespace Starlight
 {
-	class FileSystem
+	class FileSystemA
 	{
 	public:
 		static std::string CreateNewFile(const std::string& filePath);

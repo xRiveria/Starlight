@@ -2,6 +2,135 @@
 #include <memory>
 #include <string>
 #include "RTTI/Reflect.hpp"
+#include "RTTI/json.hpp"
+#include "IO/FileSystem.h"
+
+using nlohmann::json;
+
+void Print(std::ostream& os, RTTI::Any object)
+{
+	const RTTI::TypeDescriptor* typeDescriptor = object.GetType();
+	os << typeDescriptor->GetName() << "::" << "\n";
+
+	for (RTTI::DataMember* dataMember : typeDescriptor->GetDataMembers())
+	{
+		const RTTI::TypeDescriptor* dataMemberType = dataMember->GetType();
+
+		if (const RTTI::Function* memberFunction = typeDescriptor->GetMemberFunction("print"); memberFunction)
+		{
+			memberFunction->Invoke(RTTI::AnyRef(), dataMember->Get(object));
+		}
+		else
+		{
+			Print(os, dataMember->Get(object));
+		}
+	}
+}
+
+template <typename T>
+void Print(const T& t)
+{
+	std::cout << RTTI::GetType<T>()->GetName() << ": " << t << std::endl;
+}
+
+class Pokemon
+{
+public:
+	Pokemon() {}
+	Pokemon(const std::string& pokemonName) : m_PokemonName(pokemonName) { }
+
+	void Print(const std::string& name)
+	{
+		std::cout << name << "\n";
+		std::cout << m_PokemonName << "\n";
+	}
+
+	float GetPokemonHealth() const { return m_PokemonHealth; }
+	void SetPokemonHealth(float newHealth) { m_PokemonHealth = newHealth; }
+
+	std::string GetName() const { return m_PokemonName; }
+
+public:
+	std::string m_PokemonName = "Pikachu";
+
+private:
+	float m_PokemonHealth = 0.0f;
+};
+
+void to_json(json& j, const Pokemon& a)
+{
+	j["PokemonName"] = a.m_PokemonName;
+	j["PokemonHealth"] = a.GetPokemonHealth();
+}
+
+void from_json(const json& j, Pokemon& a)
+{
+	a.m_PokemonName = j.at("PokemonName");
+	a.SetPokemonHealth(j.at("PokemonHealth"));
+}
+
+void SerializePokemon(json& json, const Pokemon& pokemon)
+{
+	json = pokemon;
+}
+
+void DeserializePokemon(const json& json, Pokemon& pokemon)
+{
+	pokemon = json;
+}
+
+void SerializationTest()
+{
+	// reflect types
+	RTTI::Reflect<int>("int")
+		.AddMemberFunction(&Print<int>, "print");
+
+	RTTI::Reflect<float>("float")
+		.AddMemberFunction(&Print<float>, "print");
+
+	RTTI::Reflect<std::string>("string")
+		.AddConstructor<const char*>()
+		.AddMemberFunction(&Print<std::string>, "print");
+
+	RTTI::Reflect<double>("double")
+		.AddConversion<int>();
+
+	RTTI::Reflect<const char*>("cstring")
+		.AddConversion<std::string>();
+
+	// Register class with our reflection.
+	RTTI::Reflect<Pokemon>("Pokemon")
+		.AddConstructor<>()
+		.AddConstructor<const std::string&>()
+		.AddDataMember(&Pokemon::m_PokemonName, "PokemonName")
+		.AddDataMember<&Pokemon::SetPokemonHealth, &Pokemon::GetPokemonHealth>("Health")
+		.AddMemberFunction(&Pokemon::Print, "Print")
+		.AddMemberFunction(&SerializePokemon, "Serialize")
+		.AddMemberFunction(&DeserializePokemon, "Deserialize");
+
+	auto pokemon = RTTI::GetType("Pokemon")->GetConstructor<const std::string&>()->NewInstance("Raichu");
+	RTTI::GetType("Pokemon")->GetMemberFunction("Print")->Invoke(pokemon, "This Pokemon Name Is");
+	RTTI::GetType("Pokemon")->GetDataMember("Health")->Set(pokemon, 500.0f);
+
+	Print(std::cout, pokemon);
+
+	// Serialize Existing Data
+	std::cout << "Serialization\n";
+	json jj;
+	RTTI::GetType("Pokemon")->GetMemberFunction("Serialize")->Invoke(RTTI::AnyRef(), RTTI::AnyRef(jj), pokemon);
+	std::cout << "Json Data: " << jj << "\n";
+
+	// Deserialize Data
+	auto pokemon2 = RTTI::GetType("Pokemon")->GetConstructor<>()->NewInstance();
+	RTTI::GetType("Pokemon")->GetMemberFunction("Deserialize")->Invoke(RTTI::AnyRef(), jj, RTTI::AnyRef(pokemon2));
+	RTTI::GetType("Pokemon")->GetMemberFunction("Print")->Invoke(pokemon2, RTTI::Any("Deserializing Time!"));
+
+	static_cast<Pokemon*>(pokemon2.Get())->Print("Type Cast");
+
+	// C++ Types
+	auto stringTest = RTTI::GetType("string")->GetConstructor<const char*>()->NewInstance("Hello");
+	std::cout << *stringTest.TryCast<std::string>();
+}
 
 namespace Application
 {
@@ -13,16 +142,22 @@ namespace Application
 	}
 }
 
-/*
 int main(int argc, int argv[])
 {
-	// Register type with the reflection system (we reflect them), and attach to them all the metaobject data thar we need.
-	// Reflect::Reflect<int>("int").AddMemberFunction(&Print<int>, "Print");
-	Reflect::Reflect<Player>("Player").AddConstructor<>().AddConstructor<float>().AddDataMember(&Player::m_Derp, "Derp").AddMemberFunction(&Player::Print, "Print");
+	IO::FileSystem::SetProjectDirectory("");
+	if (IO::FileSystem::Exists("Demo.h"))
+	{
+		std::cout << "Exists!\n";
+	}
 
-	Reflect::Any playerObject = Reflect::Resolve("Player")->GetConstructor<>()->NewInstance();
-	Reflect::Resolve("Player")->GetMemberFunction("Print")->Invoke(playerObject, "Player 5 Stats: ");
-	// Print
+	auto filePaths = IO::FileSystem::GetFilesInDirectory("");
+	for (auto& path : filePaths)
+	{
+		std::cout << IO::FileSystem::GetDirectoryFromFilePath(path) << "\n";
+	}
+
+	IO::FileSystem::Delete("Peep.txt");
+
 
 	//Example way to setup the system for use with your engine. 
 	Application::Log::InitializeLogger();
@@ -60,4 +195,3 @@ int main(int argc, int argv[])
 
 	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
 }
-*/

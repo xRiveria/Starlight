@@ -27,7 +27,7 @@
     <ClInclude Include="Logging\BacktraceBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Logging\FileSystem.h">
+    <ClInclude Include="Logging\FileSystemA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Demo.h">
@@ -63,6 +63,9 @@
     <ClInclude Include="RTTI\TypeFactory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logging\Logger.cpp">
@@ -77,10 +80,10 @@
     <ClCompile Include="Logging\BacktraceBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Logging\FileSystem.cpp">
+    <ClCompile Include="Logging\FileSystemA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RTTI_Demo.cpp">
+    <ClCompile Include="IO\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
