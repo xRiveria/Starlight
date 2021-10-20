@@ -1,4 +1,5 @@
 #include "FileSystem.h"
+#include <fstream>
 #include <filesystem>
 #include <iostream>
 
@@ -6,12 +7,33 @@ namespace IO
 {
     std::string FileSystem::m_ProjectDirectory = "";
 
+	void FileSystem::CreateTextFile(const std::string& filePath, const std::string& text)
+	{
+		std::ofstream outputFile(filePath);
+		outputFile << text;
+		outputFile.flush();
+		outputFile.close();
+	}
+
 	void FileSystem::OpenDirectory(const std::string& filePath)
 	{
+
 	}
 
 	bool FileSystem::CreateDirectory_(const std::string& filePath)
 	{
+		try
+		{
+			if (std::filesystem::create_directories(filePath))
+			{
+				return true;
+			}
+		}
+		catch (const std::filesystem::filesystem_error& error)
+		{
+			std::cout << filePath << " - " << error.what() << "\n";
+		}
+
 		return false;
 	}
 
@@ -49,6 +71,11 @@ namespace IO
 		return false; 
 	}
 
+	bool FileSystem::CopyFileTo(const std::string& oldPath, const std::string& newPath)
+	{
+		return false;
+	}
+
 	std::string FileSystem::GetFileNameFromFilePath(const std::string& filePath)
 	{
 		if (FileSystem::Exists(filePath))
@@ -74,6 +101,11 @@ namespace IO
 		}
 
 		return fileName;
+	}
+
+	std::string FileSystem::GetFilePathWithoutExtension(const std::string& filePath)
+	{
+		return GetDirectoryFromFilePath(filePath) + GetFileNameWithoutExtensionFromFilePath(filePath);
 	}
 
 	std::string FileSystem::GetDirectoryFromFilePath(const std::string& filePath)
@@ -123,14 +155,54 @@ namespace IO
 	}
 
 	
+	std::string FileSystem::GetExtensionFromFilePath(const std::string& filePath)
+	{
+		const size_t fileExtension = filePath.find_last_of('.');
+
+		if (fileExtension != std::string::npos)
+		{
+			return filePath.substr(fileExtension, filePath.size());
+		}
+
+		return "Extension Error";
+	}
+
 	std::string FileSystem::GetCurrentDirectory_()
 	{
 		return std::filesystem::current_path().string();
 	}
 
+	std::string FileSystem::ReplaceExtension(const std::string& filePath, const std::string& extension)
+	{
+		return GetDirectoryFromFilePath(filePath) + GetFileNameWithoutExtensionFromFilePath(filePath) + extension;
+	}
+
 	std::vector<std::string> FileSystem::GetDirectoriesInDirectory(const std::string& filePath)
 	{
-		return std::vector<std::string>();
+		const std::string path = filePath.empty() ? GetCurrentDirectory_() : filePath;
+
+		std::vector<std::string> directories;
+
+		const std::filesystem::directory_iterator iteratorEnd;
+
+		try
+		{
+			for (std::filesystem::directory_iterator iterator(path); iterator != iteratorEnd; ++iterator)
+			{
+				if (!std::filesystem::is_directory(iterator->status()))
+				{
+					continue;
+				}
+
+				directories.emplace_back(iterator->path().string());
+			}
+		}
+		catch (const std::system_error& systemError)
+		{
+			std::cout << filePath << " - " << systemError.what() << "\n";
+		}
+
+		return directories;
 	}
 
 	std::vector<std::string> FileSystem::GetFilesInDirectory(const std::string& filePath)

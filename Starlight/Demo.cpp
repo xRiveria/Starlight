@@ -150,13 +150,15 @@ int main(int argc, int argv[])
 		std::cout << "Exists!\n";
 	}
 
-	auto filePaths = IO::FileSystem::GetFilesInDirectory("");
+	auto filePaths = IO::FileSystem::GetDirectoriesInDirectory("");
 	for (auto& path : filePaths)
 	{
-		std::cout << IO::FileSystem::GetDirectoryFromFilePath(path) << "\n";
+		std::cout << IO::FileSystem::GetFilePathWithoutExtension(path) << "\n";
 	}
 
 	IO::FileSystem::Delete("Peep.txt");
+	IO::FileSystem::CreateDirectory_("Derp");
+	IO::FileSystem::CreateTextFile("Hello.txt", "dwdqdwrfrfw");
 
 
 	//Example way to setup the system for use with your engine. 

@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Demo.h" />
     <ClInclude Include="IO\FileSystem.h" />
+    <ClInclude Include="IO\StringUtilities.h" />
     <ClInclude Include="Logging\BacktraceBuffer.h" />
     <ClInclude Include="Logging\ConsoleState.h" />
     <ClInclude Include="Logging\FileSystemA.h" />
