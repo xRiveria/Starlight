@@ -169,7 +169,7 @@ int main(int argc, int argv[])
 
 	IO::FileSystem::Delete("Peep.txt");
 	// IO::FileSystem::CreateDirectory_("Derp");
-	IO::FileSystem::CreateTextFile("Hello.txt", "dwdqdwrfrfw");
+	// IO::FileSystem::CreateTextFile("Hello.txt", "dwdqdwrfrfw");
 
 
 	//Example way to setup the system for use with your engine. 

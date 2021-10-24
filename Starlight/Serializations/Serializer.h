@@ -17,24 +17,24 @@ namespace Serializer
         float m_Damage = 50.5f;
         int m_Health = 500;
 
-        YAMLSerializer serializer = GetSerializer<YAMLSerializer>(Serialization_Target::Serialization_Target_Scene, "MyBirdsss.starlight");
+        YAMLSerializer serializer = GetSerializer<YAMLSerializer>(Serialization_Target::Serialization_Target_Scene, "YAMLSerialTest.starlight");
         serializer.BeginSerialization();
         serializer.Write("Damage", m_Damage);
         serializer.Write("Health", m_Health);
         serializer.EndSerialization();
 
-        BinarySerializer binarySerializer = GetSerializer<BinarySerializer>(Serialization_Target::Serialization_Target_Assets, "MyBirdsss.starlight");
+        BinarySerializer binarySerializer = GetSerializer<BinarySerializer>(Serialization_Target::Serialization_Target_Assets, "BinarySerialTest.starlight");
         binarySerializer.BeginSerialization();
         binarySerializer.Write("Damage", m_Damage);
         binarySerializer.Write("Health", m_Health);
         binarySerializer.EndSerialization();
 
-        float m_Damage = 0.0f;
-        int m_Health = 5;
-        BinarySerializer binaryDeserializer = GetSerializer<BinarySerializer>(Serialization_Target::Serialization_Target_Assets, "MyBirdsss.starlight");
+        float m_DamageReinitialized = 0.0f;
+        int m_HealthReinitialized = 5;
+        BinarySerializer binaryDeserializer = GetSerializer<BinarySerializer>(Serialization_Target::Serialization_Target_Assets, "BinarySerialTest.starlight");
         binaryDeserializer.BeginDeserialization();
-        binaryDeserializer.Read("Damage", &m_Damage);
-        binaryDeserializer.Read("Health", &m_Health);
+        binaryDeserializer.Read("Damage", &m_DamageReinitialized);
+        binaryDeserializer.Read("Health", &m_HealthReinitialized);
         binaryDeserializer.EndDeserialization();
     }
 }

@@ -9,7 +9,7 @@ public:
 
     void BeginSerialization() override
     {
-        m_StreamFlags |= std::ios::in;
+        m_StreamFlags |= std::ios::out;
 
         m_OutputStream.open(m_OperatingFilePath, m_StreamFlags);
         if (m_OutputStream.fail())
