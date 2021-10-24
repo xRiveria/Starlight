@@ -103,6 +103,16 @@ namespace IO
 		return fileName;
 	}
 
+	std::string FileSystem::GetRootDirectory(const std::string& filePath)
+	{
+		return std::filesystem::path(filePath).root_directory().generic_string();
+	}
+
+	std::string FileSystem::GetParentDirectory(const std::string& filePath)
+	{
+		return std::filesystem::path(filePath).parent_path().generic_string();
+	}
+
 	std::string FileSystem::GetFilePathWithoutExtension(const std::string& filePath)
 	{
 		return GetDirectoryFromFilePath(filePath) + GetFileNameWithoutExtensionFromFilePath(filePath);

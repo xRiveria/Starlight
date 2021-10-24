@@ -24,11 +24,14 @@ namespace IO
         static std::string GetCurrentDirectory_();
 
         static std::string GetFileNameFromFilePath(const std::string& filePath);
-        static std::string GetFileNameWithoutExtensionFromFilePath(const std::string& filePath);
-        static std::string GetDirectoryFromFilePath(const std::string& filePath);
         static std::string GetFilePathWithoutExtension(const std::string& filePath);
+        static std::string GetFileNameWithoutExtensionFromFilePath(const std::string& filePath);
+        static std::string GetRootDirectory(const std::string& filePath);
+        static std::string GetParentDirectory(const std::string& filePath);
+        static std::string GetDirectoryFromFilePath(const std::string& filePath);
         static std::string GetExtensionFromFilePath(const std::string& filePath);
         static std::string ReplaceExtension(const std::string& filePath, const std::string& extension);
+
         static std::vector<std::string> GetDirectoriesInDirectory(const std::string& filePath);
         static std::vector<std::string> GetFilesInDirectory(const std::string& filePath);
 

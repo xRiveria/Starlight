@@ -2,8 +2,12 @@
 #include <memory>
 #include <string>
 #include "RTTI/Reflect.hpp"
-#include "RTTI/json.hpp"
+#include <json/json.hpp>
 #include "IO/FileSystem.h"
+#include "IO/StringUtilities.h"
+#include "Compression/Huffman.h"
+#include "Serializations/Serializers/YAMLSerializer.h"
+#include "Serializations/Serializer.h"
 
 using nlohmann::json;
 
@@ -144,6 +148,13 @@ namespace Application
 
 int main(int argc, int argv[])
 {
+	Serializer::Serialize();
+
+	// Node that the string's storage is internally its string characters * 8 bits. 47 x 8 = 376 bits, but the encoded string only takes 194 bits (48% of compression).
+	std::string textToCompress = "Huffman coding is a data compression algorithm.";
+
+	TestCompression(textToCompress);
+
 	IO::FileSystem::SetProjectDirectory("");
 	if (IO::FileSystem::Exists("Demo.h"))
 	{
@@ -153,11 +164,11 @@ int main(int argc, int argv[])
 	auto filePaths = IO::FileSystem::GetDirectoriesInDirectory("");
 	for (auto& path : filePaths)
 	{
-		std::cout << IO::FileSystem::GetFilePathWithoutExtension(path) << "\n";
+		std::cout << StringUtilities::ConvertToLowercase(IO::FileSystem::GetFileNameWithoutExtensionFromFilePath(path)) << "\n";
 	}
 
 	IO::FileSystem::Delete("Peep.txt");
-	IO::FileSystem::CreateDirectory_("Derp");
+	// IO::FileSystem::CreateDirectory_("Derp");
 	IO::FileSystem::CreateTextFile("Hello.txt", "dwdqdwrfrfw");
 
 
