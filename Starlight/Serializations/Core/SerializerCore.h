@@ -32,7 +32,6 @@ enum class Serialization_CoreField
                                                  std::is_same<T, double>::value                      || \
                                                  std::is_same<T, long double>::value                 || \
                                                  std::is_same<T, float>::value>::type       
-                                
 
 class SerializerCore
 {
@@ -91,18 +90,37 @@ protected:
         return "Target Error";
     }
 
-private: 
-    virtual bool _WriteInternal(const std::string& keyName, float value) = 0;
+private:
+    // Implementation per type to account for special cases.
     virtual bool _WriteInternal(const std::string& keyName, bool value) = 0;
-    virtual bool _WriteInternal(const std::string& keyName, uint32_t value) = 0;
     virtual bool _WriteInternal(const std::string& keyName, int value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, float value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, double value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, long value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, long long value) = 0;
+    // virtual bool _WriteInternal(const std::string& keyName, long double value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, unsigned long value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, unsigned long long value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, uint8_t value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, uint16_t value) = 0;
+    virtual bool _WriteInternal(const std::string& keyName, uint32_t value) = 0;
+    // virtual bool _WriteInternal(const std::string& keyName, uint64_t value) = 0;
 
     // =====
 
-    virtual bool _ReadInternal(const std::string& keyName, float* value) = 0;
     virtual bool _ReadInternal(const std::string& keyName, bool* value) = 0;
-    virtual bool _ReadInternal(const std::string& keyName, uint32_t* value) = 0;
     virtual bool _ReadInternal(const std::string& keyName, int* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, float* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, double* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, long* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, long long* value) = 0;
+    // virtual bool _ReadInternal(const std::string& keyName, long double* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, unsigned long* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, unsigned long long* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, uint8_t* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, uint16_t* value) = 0;
+    virtual bool _ReadInternal(const std::string& keyName, uint32_t* value) = 0;
+    // virtual bool _ReadInternal(const std::string& keyName, uint64_t* value) = 0;
 
 protected:
     bool m_IsVersionVerified = false;

@@ -6,6 +6,11 @@
 
 namespace Serializer
 {
+    class Serializer
+    {
+
+    };
+
     template <typename T, typename = typename std::enable_if<std::is_base_of<SerializerCore, T>::value, T>::type>
     T GetSerializer(Serialization_Target targetSerializable, const std::string& filePath)
     {

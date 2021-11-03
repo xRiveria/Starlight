@@ -8,6 +8,8 @@
 #include "Compression/Huffman.h"
 #include "Serializations/Serializers/YAMLSerializer.h"
 #include "Serializations/Serializer.h"
+#include "Utilities/MPMCQueue.h"
+#include <thread>
 
 using nlohmann::json;
 
@@ -148,6 +150,31 @@ namespace Application
 
 int main(int argc, int argv[])
 {
+	Utilities::MPMCQueue<int> queue(10);
+	auto thread1 = std::thread([&]
+	{
+		int v;
+		queue.pop(v);
+		std::cout << "T1 " << v << "\n";
+	});
+
+	auto thread2 = std::thread([&]
+	{
+		int v;
+		queue.pop(v);
+		std::cout << "T2 " << v << "\n";
+	});
+
+	//queue.push(1);
+	//queue.push(2);
+	queue.push(3);
+	queue.push(4);
+	// Pops last 2
+	thread1.join(); 
+	thread2.join();
+
+	
+
 	Serializer::Serialize();
 
 	// Node that the string's storage is internally its string characters * 8 bits. 47 x 8 = 376 bits, but the encoded string only takes 194 bits (48% of compression).
@@ -207,4 +234,7 @@ int main(int argc, int argv[])
 	Application::Log::GetInstance()->DumpBacktracingBuffer();
 
 	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
+
+
+
 }

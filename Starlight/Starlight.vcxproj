@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Compression\Huffman.h" />
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="IO\EngineIO.h" />
     <ClInclude Include="IO\FileSystem.h" />
     <ClInclude Include="IO\StringUtilities.h" />
     <ClInclude Include="Logging\BacktraceBuffer.h" />
@@ -173,6 +174,8 @@
     <ClInclude Include="Logging\LogUtilities.h" />
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="OS\Windows\SystemInfo.h" />
+    <ClInclude Include="ResourceCache\IResource.h" />
+    <ClInclude Include="ResourceCache\StarlightObject.h" />
     <ClInclude Include="RTTI\Any.hpp" />
     <ClInclude Include="RTTI\Base.hpp" />
     <ClInclude Include="RTTI\Constructor.hpp" />
@@ -187,10 +190,13 @@
     <ClInclude Include="Serializations\Serializers\BinarySerializer.h" />
     <ClInclude Include="Serializations\Core\SerializerCore.h" />
     <ClInclude Include="Serializations\Serializers\YAMLSerializer.h" />
+    <ClInclude Include="Serializations\Serializers\YAMLUtilities.h" />
     <ClInclude Include="Timer\Timer.h" />
+    <ClInclude Include="Utilities\MPMCQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
+    <ClCompile Include="IO\EngineIO.cpp" />
     <ClCompile Include="IO\FileSystem.cpp" />
     <ClCompile Include="IO\StringUtilities.cpp" />
     <ClCompile Include="Logging\BacktraceBuffer.cpp" />
@@ -198,6 +204,7 @@
     <ClCompile Include="Logging\FileSystemA.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="OS\Windows\SystemInfo.cpp" />
+    <ClCompile Include="ResourceCache\IResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RTTI\TypeDescriptor.inl" />

@@ -82,17 +82,7 @@ private:
     }
 
 private:
-    bool _WriteInternal(const std::string& keyName, float value) override
-    {
-        return WriteBasicType(keyName, value);
-    }
-
     bool _WriteInternal(const std::string& keyName, bool value) override
-    {
-        return WriteBasicType(keyName, value);
-    }
-
-    bool _WriteInternal(const std::string& keyName, uint32_t value) override
     {
         return WriteBasicType(keyName, value);
     }
@@ -102,9 +92,49 @@ private:
         return WriteBasicType(keyName, value);
     }
 
-    bool _ReadInternal(const std::string& keyName, float* value) override
+    bool _WriteInternal(const std::string& keyName, float value) override
     {
-        return ReadBasicType(keyName, value);
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, double value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, long value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, long long value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, unsigned long value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, unsigned long long value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, uint8_t value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, uint16_t value) override
+    {
+        return WriteBasicType(keyName, value);
+    }
+
+    bool _WriteInternal(const std::string& keyName, uint32_t value) override
+    {
+        return WriteBasicType(keyName, value);
     }
 
     bool _ReadInternal(const std::string& keyName, bool* value) override
@@ -112,12 +142,52 @@ private:
         return ReadBasicType(keyName, value);
     }
 
-    bool _ReadInternal(const std::string& keyName, uint32_t* value) override
+    bool _ReadInternal(const std::string& keyName, int* value) override
     {
         return ReadBasicType(keyName, value);
     }
 
-    bool _ReadInternal(const std::string& keyName, int* value) override
+    bool _ReadInternal(const std::string& keyName, float* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, double* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, long* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, long long* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, unsigned long* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, unsigned long long* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, uint8_t* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, uint16_t* value) override
+    {
+        return ReadBasicType(keyName, value);
+    }
+
+    bool _ReadInternal(const std::string& keyName, uint32_t* value) override
     {
         return ReadBasicType(keyName, value);
     }
