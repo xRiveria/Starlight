@@ -9,6 +9,7 @@
 #include "Serializations/Serializers/YAMLSerializer.h"
 #include "Serializations/Serializer.h"
 #include "Utilities/MPMCQueue.h"
+#include "Utilities/SPSCQueue.h"
 #include <thread>
 
 using nlohmann::json;
@@ -173,7 +174,20 @@ int main(int argc, int argv[])
 	thread1.join(); 
 	thread2.join();
 
+
+	Utilities::SPSCQueue<int> spscQueue(1);
+	auto t = std::thread([&]
+	{
+		while (!spscQueue.front())
+			;
+		
+		std::cout << *spscQueue.front() << "\n";
+		spscQueue.pop();
+	});
 	
+	spscQueue.push(1);
+	t.join();
+
 
 	Serializer::Serialize();
 

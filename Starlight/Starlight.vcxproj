@@ -193,6 +193,7 @@
     <ClInclude Include="Serializations\Serializers\YAMLUtilities.h" />
     <ClInclude Include="Timer\Timer.h" />
     <ClInclude Include="Utilities\MPMCQueue.h" />
+    <ClInclude Include="Utilities\SPSCQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
