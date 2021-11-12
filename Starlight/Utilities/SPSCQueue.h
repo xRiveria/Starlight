@@ -17,7 +17,7 @@ namespace Utilities
         struct has_allocate_at_least : std::false_type {};
 
         template <typename Alloc2>
-        struct has_allocate_at_least < Alloc2, std::void_t<typename Alloc2::value_type, decltype(std::declval<Alloc2&>().allocate_at_least(size_t{})) >> : std::true_type{};
+        struct has_allocate_at_least<Alloc2, std::void_t<typename Alloc2::value_type, decltype(std::declval<Alloc2&>().allocate_at_least(size_t{})) >> : std::true_type{};
 #endif
     public:
         explicit SPSCQueue(const size_t capacity, const Allocator& allocator = Allocator()) : m_Capacity(capacity), m_Allocator(allocator)
@@ -176,7 +176,7 @@ namespace Utilities
             static_assert(std::is_nothrow_destructible<T>::value, "T must be nothrow destructible.");
 
             const unsigned long long readIndex = m_ReadIndex.load(std::memory_order_relaxed); 
-            assert(m_WriteIndex.load(std::memory_order_acquire) != m_ReadIndex); // Ensure that our queue isn't empty. This can happens when both the read and write index are at 0.
+            assert(m_WriteIndex.load(std::memory_order_acquire) != readIndex); // Ensure that our queue isn't empty. This can happens when both the read and write index are at 0.
 
             m_Slots[readIndex + m_SlotPadding].~T(); // Remember that our slots are padded. 
             unsigned long long nextReadIndex = m_ReadIndex + 1;

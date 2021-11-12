@@ -10,7 +10,10 @@
 #include "Serializations/Serializer.h"
 #include "Utilities/MPMCQueue.h"
 #include "Utilities/SPSCQueue.h"
+#include "Utilities/Seqlock.h"
 #include <thread>
+#include "Utilities/Allocator.h"
+#include "Log/LogMacros.h"
 
 using nlohmann::json;
 
@@ -141,16 +144,37 @@ void SerializationTest()
 
 namespace Application
 {
-	std::shared_ptr<Starlight::Logger> Log::s_ApplicationLogger = nullptr;
+	//std::shared_ptr<Starlight::Logger> Log::s_ApplicationLogger = nullptr;
 
-	void Log::InitializeLogger()
-	{
-		s_ApplicationLogger = std::make_shared<Starlight::Logger>("Aurora Engine"); //Creates a global logger object.
-	}
+	//void Log::InitializeLogger()
+	//{
+	//	s_ApplicationLogger = std::make_shared<Starlight::Logger>("Aurora Engine"); //Creates a global logger object.
+	//}
 }
 
 int main(int argc, int argv[])
 {
+	AURORA_INFO(Aurora::LogLayer::Engine, "Hello There!");
+
+	Utilities::Seqlock<int> integer;
+	integer.Store(0);
+	auto testThread = std::thread([&]
+	{
+		for (;;)
+		{
+			auto d = integer.Load();
+			std::cout << "Seqlock Result:" << d + 100 << "\n";
+			return;
+		}
+	});
+	integer.Store(5);
+	testThread.join();
+
+	auto d = integer.Load();
+	std::cout << d << "\n";
+
+    Vector<int> m_Derp(6);
+
 	Utilities::MPMCQueue<int> queue(10);
 	auto thread1 = std::thread([&]
 	{
@@ -170,12 +194,12 @@ int main(int argc, int argv[])
 	//queue.push(2);
 	queue.push(3);
 	queue.push(4);
-	// Pops last 2
+	// Pops last 2 
 	thread1.join(); 
 	thread2.join();
 
 
-	Utilities::SPSCQueue<int> spscQueue(1);
+	Utilities::SPSCQueue<int> spscQueue(3);
 	auto t = std::thread([&]
 	{
 		while (!spscQueue.front())
@@ -188,6 +212,9 @@ int main(int argc, int argv[])
 	spscQueue.push(1);
 	t.join();
 
+
+
+	//spscQueue.emplace(1);
 
 	Serializer::Serialize();
 
@@ -212,7 +239,7 @@ int main(int argc, int argv[])
 	// IO::FileSystem::CreateDirectory_("Derp");
 	// IO::FileSystem::CreateTextFile("Hello.txt", "dwdqdwrfrfw");
 
-
+	/*
 	//Example way to setup the system for use with your engine. 
 	Application::Log::InitializeLogger();
 
@@ -246,7 +273,7 @@ int main(int argc, int argv[])
 	//Outputs the messages you've stored in a backbuffer if enabled.
 	std::cout << "Dumping backtrace buffer..." << "\n";
 	Application::Log::GetInstance()->DumpBacktracingBuffer();
-
+	*/
 	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
 
 

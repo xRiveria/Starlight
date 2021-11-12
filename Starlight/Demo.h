@@ -1,7 +1,7 @@
 #pragma once
-#include "Logging/Logger.h"
 #include <memory>
 
+/*
 namespace Application
 {
 	class Log
@@ -21,3 +21,5 @@ namespace Application
 #define ENGINE_LOG_WARN(...)			::Application::Log::GetInstance()->WriteWarningLog(__VA_ARGS__);
 #define ENGINE_LOG_ERROR(...)			::Application::Log::GetInstance()->WriteErrorLog(__VA_ARGS__);
 #define ENGINE_LOG_CRITICAL(...)		::Application::Log::GetInstance()->WriteCriticalLog(__VA_ARGS__);
+
+*/
