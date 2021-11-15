@@ -16,6 +16,7 @@
 #include "Log/Logger.h"
 #include "Log/LogMacros.h"
 #include "Debug/MemoryTracker.h"
+#include "Memory/MemoryRegistryMacros.h"
 
 using nlohmann::json;
 
@@ -174,8 +175,12 @@ public:
 
 int main(int argc, int argv[])
 {
+	REGISTER_MEMORY_BLOCK(Memory::MemoryPoolType::MemoryPoolType_General, sizeof(uint32_t) * 60);
+	std::cout << Memory::MemoryPoolRegistry::GetInstance().GetMemoryPoolUsage(Memory::MemoryPoolType::MemoryPoolType_General) << "\n";
+
 	AURORA_TRACE(2 + 2);
 	{
+		TRACE_ON();
 		MEMORY_ON();
 		int* ptrTest = new int;
 		delete ptrTest;
@@ -186,8 +191,11 @@ int main(int argc, int argv[])
 		std::vector<int> vector;
 		vector.push_back(1);
 		Foo s("goodbye");
+
 		MEMORY_OFF();
 	}
+
+
 
 	Aurora::Logger::GetInstance().EnableBackbuffer();
 	AURORA_ERROR(Aurora::LogLayer::Engine, Aurora::DebugCode::AURORA_ERROR_INITIALIZATION_FAILURE, "Hello There!");

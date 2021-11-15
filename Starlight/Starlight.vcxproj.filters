@@ -129,6 +129,12 @@
     <ClInclude Include="Debug\MemoryTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Memory\MemoryRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryRegistryMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp">

@@ -1,6 +1,7 @@
 #pragma once
 
-// Traces all new and delete calls for memory tracing. We will store the line and file where new/delete are called.
+// Traces all user new and delete calls for memory tracing. We will store the line and file where new/delete are called.
+// Note that this is meant to track user calls only. 
 
 #ifdef AURORA_DEBUG
 

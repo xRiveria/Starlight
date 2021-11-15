@@ -178,6 +178,8 @@
     <ClInclude Include="Log\Logger.h" />
     <ClInclude Include="Log\LogMacros.h" />
     <ClInclude Include="Log\LogStructures.h" />
+    <ClInclude Include="Memory\MemoryRegistry.h" />
+    <ClInclude Include="Memory\MemoryRegistryMacros.h" />
     <ClInclude Include="ResourceCache\IResource.h" />
     <ClInclude Include="ResourceCache\StarlightObject.h" />
     <ClInclude Include="RTTI\Any.hpp" />
