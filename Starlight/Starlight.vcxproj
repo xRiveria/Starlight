@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AURORA_DEBUG;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;AURORA_DEBUG;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\;</AdditionalIncludeDirectories>
@@ -112,7 +112,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AURORA_DEBUG;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;AURORA_DEBUG;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\;</AdditionalIncludeDirectories>
@@ -130,7 +130,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AURORA_DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;AURORA_DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\;</AdditionalIncludeDirectories>
@@ -148,7 +148,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AURORA_DEBUG;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;AURORA_DEBUG;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\;</AdditionalIncludeDirectories>
@@ -167,8 +167,6 @@
     <ClInclude Include="Debug\DebugCode.h" />
     <ClInclude Include="Debug\DebugUtilities.h" />
     <ClInclude Include="Demo.h" />
-    <ClInclude Include="ECS\Component.h" />
-    <ClInclude Include="ECS\Entity.h" />
     <ClInclude Include="ECS\Registry.h" />
     <ClInclude Include="IO\EngineIO.h" />
     <ClInclude Include="IO\FileSystem.h" />
@@ -176,8 +174,10 @@
     <ClInclude Include="Logging\OS\Windows\SystemInfo.h" />
     <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Log\LogClassification.h" />
+    <ClInclude Include="Log\LogFormatter.h" />
     <ClInclude Include="Log\Logger.h" />
     <ClInclude Include="Log\LogMacros.h" />
+    <ClInclude Include="Log\LogStructures.h" />
     <ClInclude Include="ResourceCache\IResource.h" />
     <ClInclude Include="ResourceCache\StarlightObject.h" />
     <ClInclude Include="RTTI\Any.hpp" />
@@ -197,19 +197,19 @@
     <ClInclude Include="Serializations\Serializers\YAMLUtilities.h" />
     <ClInclude Include="Timer\Timer.h" />
     <ClInclude Include="Utilities\Allocator.h" />
+    <ClInclude Include="Debug\MemoryTracker.h" />
     <ClInclude Include="Utilities\MPMCQueue.h" />
     <ClInclude Include="Utilities\Seqlock.h" />
     <ClInclude Include="Utilities\SPSCQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
-    <ClCompile Include="ECS\Entity.cpp" />
-    <ClCompile Include="ECS\Registry.cpp" />
     <ClCompile Include="IO\EngineIO.cpp" />
     <ClCompile Include="IO\FileSystem.cpp" />
     <ClCompile Include="IO\StringUtilities.cpp" />
     <ClCompile Include="Log\Logger.cpp" />
     <ClCompile Include="ResourceCache\IResource.cpp" />
+    <ClCompile Include="Debug\MemoryTracker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RTTI\TypeDescriptor.inl" />

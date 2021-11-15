@@ -13,7 +13,9 @@
 #include "Utilities/Seqlock.h"
 #include <thread>
 #include "Utilities/Allocator.h"
+#include "Log/Logger.h"
 #include "Log/LogMacros.h"
+#include "Debug/MemoryTracker.h"
 
 using nlohmann::json;
 
@@ -152,10 +154,44 @@ namespace Application
 	//}
 }
 
+class Foo
+{
+public:
+	Foo(const char* s)
+	{
+		this->s = new char[strlen(s) + 1];
+		strcpy(this->s, s);
+	}
+
+	~Foo()
+	{
+		delete[] this->s;
+	}
+
+	char* s;
+
+};
+
 int main(int argc, int argv[])
 {
-	AURORA_INFO(Aurora::LogLayer::Engine, "Hello There!");
+	AURORA_TRACE(2 + 2);
+	{
+		MEMORY_ON();
+		int* ptrTest = new int;
+		delete ptrTest;
+		int* q = new int[3];
+		delete[] q;
+		int* r = nullptr;
+		delete r;
+		std::vector<int> vector;
+		vector.push_back(1);
+		Foo s("goodbye");
+		MEMORY_OFF();
+	}
 
+	Aurora::Logger::GetInstance().EnableBackbuffer();
+	AURORA_ERROR(Aurora::LogLayer::Engine, Aurora::DebugCode::AURORA_ERROR_INITIALIZATION_FAILURE, "Hello There!");
+	// AURORA_TEST("Hello {0} ya", 2);
 	Utilities::Seqlock<int> integer;
 	integer.Store(0);
 	auto testThread = std::thread([&]

@@ -9,7 +9,8 @@ namespace Aurora
         Info,
         Warning,
         Error,
-        Critical
+        Critical,
+        Unknown
     };
 
     inline const char* LogLevelToString(LogLevel logLevel)
@@ -27,6 +28,9 @@ namespace Aurora
 
             case LogLevel::Critical:
                 return "Critical";
+
+            case LogLevel::Unknown:
+                return "Unknown";
         }
 
         return "Unknown Log Level";
@@ -42,7 +46,8 @@ namespace Aurora
         Serialization,
         ECS,
         Audio,
-        Scripting
+        Scripting,
+        Unknown
     };
 
     inline const char* LogLayerToString(LogLayer logLevel)
@@ -72,6 +77,9 @@ namespace Aurora
 
             case LogLayer::Scripting:
                 return "Scripting";
+
+            case LogLayer::Unknown:
+                return "Unknown";
         }
 
         return "Unknown Log Layer";
