@@ -123,9 +123,6 @@
     <ClInclude Include="Log\LogFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Registry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Debug\MemoryTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -133,6 +130,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\MemoryRegistryMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hashmap\Aurora_Hashmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Huffman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\PriorityQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Trie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -167,7 +167,7 @@
     <ClInclude Include="Debug\DebugCode.h" />
     <ClInclude Include="Debug\DebugUtilities.h" />
     <ClInclude Include="Demo.h" />
-    <ClInclude Include="ECS\Registry.h" />
+    <ClInclude Include="Hashmap\Aurora_Hashmap.h" />
     <ClInclude Include="IO\EngineIO.h" />
     <ClInclude Include="IO\FileSystem.h" />
     <ClInclude Include="IO\StringUtilities.h" />
@@ -200,9 +200,12 @@
     <ClInclude Include="Timer\Timer.h" />
     <ClInclude Include="Utilities\Allocator.h" />
     <ClInclude Include="Debug\MemoryTracker.h" />
+    <ClInclude Include="Utilities\Huffman.h" />
     <ClInclude Include="Utilities\MPMCQueue.h" />
+    <ClInclude Include="Utilities\PriorityQueue.h" />
     <ClInclude Include="Utilities\Seqlock.h" />
     <ClInclude Include="Utilities\SPSCQueue.h" />
+    <ClInclude Include="Utilities\Trie.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />

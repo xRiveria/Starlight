@@ -15,8 +15,12 @@
 #include "Utilities/Allocator.h"
 #include "Log/Logger.h"
 #include "Log/LogMacros.h"
-#include "Debug/MemoryTracker.h"
+#include "Utilities/PriorityQueue.h"
+#include "Utilities/Trie.h"
 #include "Memory/MemoryRegistryMacros.h"
+#include "Debug/MemoryTracker.h"
+
+// Demo test bed for the tools within.
 
 using nlohmann::json;
 
@@ -145,16 +149,6 @@ void SerializationTest()
 	std::cout << *stringTest.TryCast<std::string>();
 }
 
-namespace Application
-{
-	//std::shared_ptr<Starlight::Logger> Log::s_ApplicationLogger = nullptr;
-
-	//void Log::InitializeLogger()
-	//{
-	//	s_ApplicationLogger = std::make_shared<Starlight::Logger>("Aurora Engine"); //Creates a global logger object.
-	//}
-}
-
 class Foo
 {
 public:
@@ -165,7 +159,7 @@ public:
 	}
 
 	~Foo()
-	{
+	{ 
 		delete[] this->s;
 	}
 
@@ -194,8 +188,6 @@ int main(int argc, int argv[])
 
 		MEMORY_OFF();
 	}
-
-
 
 	Aurora::Logger::GetInstance().EnableBackbuffer();
 	AURORA_ERROR(Aurora::LogLayer::Engine, Aurora::DebugCode::AURORA_ERROR_INITIALIZATION_FAILURE, "Hello There!");
@@ -255,7 +247,6 @@ int main(int argc, int argv[])
 	
 	spscQueue.push(1);
 	t.join();
-
 
 
 	//spscQueue.emplace(1);
@@ -318,8 +309,9 @@ int main(int argc, int argv[])
 	std::cout << "Dumping backtrace buffer..." << "\n";
 	Application::Log::GetInstance()->DumpBacktracingBuffer();
 	*/
+
 	std::cerr << "Error!\n"; // Unbuffered standard stream. Displays the error message immediately.
-
-
-
+	TestMaxHeap();
+	std::cout << std::endl;
+	TestTrie();
 }
